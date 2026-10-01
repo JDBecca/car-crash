@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://dtg23015j6nxi"]
+
+[ext_resource type="Script" uid="uid://bkblrdsx4vxwu" path="res://Scripts/Main.cs" id="1_kln2b"]
+[ext_resource type="PackedScene" uid="uid://c15ccfkayig4e" path="res://Scenes/Enemy.tscn" id="3_kln2b"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_idj7w"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_idj7w"]
+size = Vector2(35, 271.5)
+
+[node name="Node2D" type="Node2D" unique_id=827022659]
+script = ExtResource("1_kln2b")
+
+[node name="Label" type="Label" parent="." unique_id=1851560806]
+offset_left = 3.0
+offset_top = 2.0
+offset_right = 43.0
+offset_bottom = 25.0
+text = "asda"
+label_settings = SubResource("LabelSettings_idj7w")
+
+[node name="Label3" type="Label" parent="." unique_id=950063359]
+offset_left = 216.0
+offset_top = 24.0
+offset_right = 256.0
+offset_bottom = 47.0
+text = "asda"
+label_settings = SubResource("LabelSettings_idj7w")
+
+[node name="Label2" type="Label" parent="." unique_id=803845937]
+offset_left = 212.0
+offset_top = 1.0
+offset_right = 252.0
+offset_bottom = 24.0
+text = "a"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1452642018]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=1200617974]
+position = Vector2(274, 111)
+shape = SubResource("RectangleShape2D_idj7w")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D" unique_id=1946085638]
+position = Vector2(127, -18)
+rotation = 1.5707964
+shape = SubResource("RectangleShape2D_idj7w")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=57915185]
+position = Vector2(126, 241)
+rotation = 1.5707964
+shape = SubResource("RectangleShape2D_idj7w")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=507393188]
+position = Vector2(-17, 111)
+shape = SubResource("RectangleShape2D_idj7w")
+
+[node name="Enemy" parent="." unique_id=899399180 instance=ExtResource("3_kln2b")]
+position = Vector2(64, 71)
+
+[node name="Enemy2" parent="." unique_id=723617247 instance=ExtResource("3_kln2b")]
+position = Vector2(180, 99)
+
+[node name="Enemy3" parent="." unique_id=356233924 instance=ExtResource("3_kln2b")]
+position = Vector2(54, 177)
+
+[node name="Enemy4" parent="." unique_id=996083080 instance=ExtResource("3_kln2b")]
+position = Vector2(161, 154)
