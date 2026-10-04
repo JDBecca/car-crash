@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Car Crash"
-run/main_scene="uid://dtg23015j6nxi"
+run/main_scene="uid://ybsdmbinvjwu"
 config/features=PackedStringArray("4.7", "C#", "GL Compatibility")
 run/max_fps=60
 config/icon="res://icon.svg"
