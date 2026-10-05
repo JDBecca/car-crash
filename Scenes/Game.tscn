@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dtg23015j6nxi"]
 
 [ext_resource type="Script" uid="uid://bkblrdsx4vxwu" path="res://Scripts/Main.cs" id="1_kln2b"]
-[ext_resource type="PackedScene" uid="uid://c15ccfkayig4e" path="res://Scenes/Enemy.tscn" id="3_kln2b"]
+[ext_resource type="PackedScene" uid="uid://b6y5a3vjepwx8" path="res://Scenes/Player.tscn" id="2_gl6un"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_idj7w"]
 
@@ -16,14 +16,6 @@ offset_left = 3.0
 offset_top = 2.0
 offset_right = 43.0
 offset_bottom = 25.0
-text = "asda"
-label_settings = SubResource("LabelSettings_idj7w")
-
-[node name="Label3" type="Label" parent="." unique_id=950063359]
-offset_left = 216.0
-offset_top = 24.0
-offset_right = 256.0
-offset_bottom = 47.0
 text = "asda"
 label_settings = SubResource("LabelSettings_idj7w")
 
@@ -54,14 +46,9 @@ shape = SubResource("RectangleShape2D_idj7w")
 position = Vector2(-17, 111)
 shape = SubResource("RectangleShape2D_idj7w")
 
-[node name="Enemy" parent="." unique_id=899399180 instance=ExtResource("3_kln2b")]
-position = Vector2(64, 71)
+[node name="Player" parent="." unique_id=1006662170 instance=ExtResource("2_gl6un")]
+position = Vector2(38, 131)
 
-[node name="Enemy2" parent="." unique_id=723617247 instance=ExtResource("3_kln2b")]
-position = Vector2(180, 99)
-
-[node name="Enemy3" parent="." unique_id=356233924 instance=ExtResource("3_kln2b")]
-position = Vector2(54, 177)
-
-[node name="Enemy4" parent="." unique_id=996083080 instance=ExtResource("3_kln2b")]
-position = Vector2(161, 154)
+[node name="Player2" parent="." unique_id=328003402 instance=ExtResource("2_gl6un")]
+position = Vector2(203, 131)
+rotation = 3.1415927

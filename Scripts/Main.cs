@@ -11,10 +11,10 @@ public partial class Main : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		var enemy = GetTree().GetFirstNodeInGroup("Enemies") as CarTemplate;
-		GetNode<Label>("Label").Text = enemy.currentHealth.ToString();
-		var player = GetTree().GetFirstNodeInGroup("Players") as CarTemplate;
-		GetNode<Label>("Label2").Text = player.currentHealth.ToString();
-		GetNode<Label>("Label3").Text = player.Velocity.Length().ToString();
+		var Nodes = GetTree().GetNodesInGroup("Players");
+		var P1 = Nodes[0] as CarTemplate;
+		var P2 = Nodes[1] as CarTemplate;
+		GetNode<Label>("Label").Text = P1.currentHealth.ToString();
+		GetNode<Label>("Label2").Text = P2.currentHealth.ToString();
 	}
 }
