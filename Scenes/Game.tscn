@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bkblrdsx4vxwu" path="res://Scripts/Main.cs" id="1_kln2b"]
 [ext_resource type="PackedScene" uid="uid://b6y5a3vjepwx8" path="res://Scenes/Player.tscn" id="2_gl6un"]
+[ext_resource type="PackedScene" uid="uid://c15ccfkayig4e" path="res://Scenes/Enemy.tscn" id="3_j5yw3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_idj7w"]
 
@@ -49,6 +50,11 @@ shape = SubResource("RectangleShape2D_idj7w")
 [node name="Player" parent="." unique_id=1006662170 instance=ExtResource("2_gl6un")]
 position = Vector2(38, 131)
 
-[node name="Player2" parent="." unique_id=328003402 instance=ExtResource("2_gl6un")]
-position = Vector2(203, 131)
-rotation = 3.1415927
+[node name="Enemy" parent="." unique_id=899399180 instance=ExtResource("3_j5yw3")]
+position = Vector2(73, 36)
+
+[node name="Enemy2" parent="." unique_id=1224729597 instance=ExtResource("3_j5yw3")]
+position = Vector2(182, 94)
+
+[node name="Enemy3" parent="." unique_id=1936711935 instance=ExtResource("3_j5yw3")]
+position = Vector2(163, 164)

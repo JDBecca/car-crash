@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c15ccfkayig4e"]
 
-[ext_resource type="Texture2D" uid="uid://cvwytnh82acjn" path="res://icon.svg" id="1_m1htj"]
 [ext_resource type="Script" uid="uid://boolrdx80wiav" path="res://Scripts/EnemyAI.cs" id="1_wovta"]
+[ext_resource type="Texture2D" uid="uid://dh8eq38wnsr0k" path="res://Assets/Sprites/red_car_sprite.png" id="2_wovta"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wovta"]
 size = Vector2(12, 6)
@@ -10,9 +10,9 @@ size = Vector2(12, 6)
 script = ExtResource("1_wovta")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=239527974]
-position = Vector2(4.7683716e-07, -1)
-scale = Vector2(0.09765626, 0.05078125)
-texture = ExtResource("1_m1htj")
+position = Vector2(-7.1525574e-07, -1)
+scale = Vector2(0.4375, 0.5)
+texture = ExtResource("2_wovta")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1363940065]
 position = Vector2(0, -1)

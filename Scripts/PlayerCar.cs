@@ -2,10 +2,12 @@ using Godot;
 
 public partial class PlayerCar : CarTemplate
 {
+		
 		private string _forward = "Forward";
 		private string _left = "Left";
 		private string _right = "Right";
 		private string _backward = "Backward";
+
 	public override void _Ready()
 	{
 		base._Ready();

@@ -24,7 +24,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	protected float brakingFriction = 3f;
 	protected float airDrag = 0.0015f; //- Negative coefficient
 
-	public int maxHealth { get; set; } = 100;
+	public int maxHealth { get; protected set; } = 100;
 	public int currentHealth { get; protected set; } = 100;
 	protected float selfRecoilMultiplier = 0.07f;
 	protected float hitCooldown = 0.3f;
