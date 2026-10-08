@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
 
 public partial class CarTemplate : CharacterBody2D, IDamageable
 {
@@ -13,6 +14,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	[Export] protected float maxSpeedForward = 150.0f; //- Units/s
 	[Export] protected float maxSpeedReverse = 120.0f; //- Units/s
 	protected float carLenght;
+	protected float carWidth;
 
 	protected Vector2 acceleration = Vector2.Zero; //- Units/s squared
 
@@ -21,12 +23,13 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	protected float minSpeedToStopDrift = 100.0f;
 
 	protected float friction = 1.5f; //- Negative coefficient
+	protected float externalFriction = 0f;
 	protected float brakingFriction = 3f;
 	protected float airDrag = 0.0015f; //- Negative coefficient
 
 	public int maxHealth { get; protected set; } = 100;
 	public int currentHealth { get; protected set; } = 100;
-	protected float selfRecoilMultiplier = 0.07f;
+	protected float recoilMultiplier = 0.07f;
 	protected float hitCooldown = 0.3f;
 	internal float hitCooldownTimer = 0.0f;
 	protected int minSpeedToDamage = 60;
@@ -41,10 +44,19 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 	public Vector2 PreCollisionVelocity { get; private set; } = Vector2.Zero;
 
+	protected bool _hasPlayerWon = false;
+
 	public override void _Ready()
 	{
 		currentHealth = maxHealth;
+
+		if (GetNode<CollisionShape2D>("CollisionShape2D").Shape is CapsuleShape2D carShape)
+		{
+			carLenght = carShape.Height;
+			carWidth = carShape.Radius;
+		}
 	}
+
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -64,7 +76,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		PreCollisionVelocity = Velocity;
 		MoveAndSlide();
 
-		HandleCollisions(PreCollisionVelocity);
+		HandleCollisions(PreCollisionVelocity, delta);
 	}
 
 
@@ -128,6 +140,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		bool noInput = Mathf.IsZeroApprox(ThrottleInput) && Mathf.IsZeroApprox(SteerInput);
 
 		float currentFriction = noInput ? brakingFriction : friction;
+		if (externalFriction > 0) { currentFriction += externalFriction; }
 		float dot = Velocity.Dot(Transform.X);
 		Vector2 frictionForce = Velocity * -currentFriction;
 		Vector2 airDragForce = Velocity * Velocity.Length() * -airDrag;
@@ -138,13 +151,175 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		acceleration += airDragForce + frictionForce;
 	}
 
+
+	protected void HandleCollisions(Vector2 preCollisionVelocity, double delta)
+	{
+		int collisionCount = GetSlideCollisionCount();
+		for (int i = 0; i < collisionCount; i++)
+		{
+			KinematicCollision2D collision2D = GetSlideCollision(i);
+			Node collider = (Node)collision2D.GetCollider();
+			Vector2 normal = collision2D.GetNormal();
+
+			if (collider is StaticBody2D)
+			{
+				HandleWallCollision(collision2D, normal, delta);
+			}
+			else if (collider is CarTemplate otherCar && collider != this)
+			{
+				HandleCarRamming(preCollisionVelocity, collision2D, otherCar);
+			}
+		}
+		if (collisionCount == 0)
+		{
+			externalFriction = 0;
+		}
+	}
+
+	protected void HandleWallCollision(KinematicCollision2D collision2D, Vector2 normal, double delta)
+	{
+		bool isFrontRearCollision = false;
+		float roundedThreshold = (carWidth / 2.0f) * 0.6f;
+		float BumperThreshold = (carLenght / 2.0f) * 0.4f;
+		externalFriction = 1.5f;
+		Vector2 collisionPoint = collision2D.GetPosition();
+		Vector2 localCollision = ToLocal(collision2D.GetPosition());
+		Vector2 rearWheel = Position - Transform.X * wheelDistance / 2.0f;
+
+		if (localCollision.X > BumperThreshold)
+		{
+			isFrontRearCollision = true;
+		}
+		else if (localCollision.X < -BumperThreshold)
+		{
+			isFrontRearCollision = true;
+		}
+
+		Vector2 wallTangent = new Vector2(-normal.Y, normal.X);
+		Vector2 wallDirection = Transform.X.Dot(wallTangent) >= 0 ? wallTangent : -wallTangent;
+		float wantedWallAngle = wallDirection.Angle();
+
+		float angleToWallRad = Mathf.AngleDifference(Rotation, wantedWallAngle);
+		float wantedSteerAngle = Mathf.RadToDeg(Mathf.Abs(angleToWallRad));
+
+		float collisionAngle = Mathf.Abs(collisionPoint.AngleToPoint(rearWheel) * 180 / Mathf.Pi);
+		if (collisionAngle > 110.0f) { collisionAngle = 110; }
+
+		if (collisionAngle > wantedSteerAngle) { collisionAngle = wantedSteerAngle; }
+
+		if (localCollision.Y > roundedThreshold && isFrontRearCollision && ThrottleInput != 0)
+		{
+			GD.Print("Angulo DER: " + (collisionAngle));
+			float angleDiffBefore = Mathf.AngleDifference(Rotation, wantedWallAngle);
+
+			_rotateAngle = -Mathf.DegToRad(collisionAngle);
+			CalculateRotation(delta);
+
+			float angleDiffAfter = Mathf.AngleDifference(Rotation, wantedWallAngle);
+			if (angleDiffBefore * angleDiffAfter <= 0.0f || Mathf.Abs(angleDiffAfter) < Mathf.DegToRad(1.0f))
+			{
+				Rotation = wantedWallAngle;
+				_rotateAngle = 0.0f;
+			}
+		}
+		else if (localCollision.Y < -roundedThreshold && isFrontRearCollision && ThrottleInput != 0)
+		{
+			GD.Print("Angulo: " + (collisionAngle));
+			float angleDiffBefore = Mathf.AngleDifference(Rotation, wantedWallAngle);
+
+			_rotateAngle = Mathf.DegToRad(collisionAngle);
+			CalculateRotation(delta);
+
+			float angleDiffAfter = Mathf.AngleDifference(Rotation, wantedWallAngle);
+			if (angleDiffBefore * angleDiffAfter <= 0.0f || Mathf.Abs(angleDiffAfter) < Mathf.DegToRad(1.0f))
+			{
+				Rotation = wantedWallAngle;
+				_rotateAngle = 0.0f;
+			}
+		}
+		else if (isFrontRearCollision)
+		{
+			acceleration = Vector2.Zero;
+			Velocity = Vector2.Zero;
+		}
+	}
+
+	protected void HandleCarRamming(Vector2 myPreCollisionVelocity, KinematicCollision2D collision2D, CarTemplate otherCar)
+	{
+		if (hitCooldownTimer > 0) { return; }
+
+		if (otherCar.hitCooldownTimer > 0) { return; }
+
+		Vector2 relativeVelocity = myPreCollisionVelocity - otherCar.PreCollisionVelocity;
+		float crashSpeed = relativeVelocity.Length();
+		if (crashSpeed < minSpeedToDamage) { return; }
+
+		Vector2 normal = collision2D.GetNormal();
+		Vector2 dirTowardsOtherCar = -normal;
+
+		float myPush = Mathf.Max(0.0f, myPreCollisionVelocity.Dot(dirTowardsOtherCar));
+		float otherCarPush = Mathf.Max(0.0f, otherCar.PreCollisionVelocity.Dot(normal));
+		float totalPush = myPush + otherCarPush;
+
+		if (totalPush <= 1.0f) { return; }
+
+		float myPushShare = myPush / totalPush;
+		float otherCarPushShare = otherCarPush / totalPush;
+
+		Vector2 collisionPoint = collision2D.GetPosition();
+		float baseDamage = Mathf.Clamp(crashSpeed / maxSpeedForward, 0f, 1f) * maxCrashDamage;
+		float damageToOtherCar;
+		float selfDamage;
+
+		float otherCarHitMultiplier = otherCar.GetHitZoneMultiplier(collisionPoint);
+
+		float myHitMultiplier = GetHitZoneMultiplier(collisionPoint);
+
+		if (otherCarPushShare <= 0.3f)
+		{
+			damageToOtherCar = baseDamage * otherCarHitMultiplier;
+			selfDamage = baseDamage * myHitMultiplier * recoilMultiplier;
+
+		}
+		else if (myPushShare <= 0.3f)
+		{
+			selfDamage = baseDamage * myHitMultiplier;
+			damageToOtherCar = baseDamage * recoilMultiplier * otherCarHitMultiplier;
+
+		}
+		else
+		{
+			selfDamage = baseDamage * myPushShare * myHitMultiplier;
+			damageToOtherCar = baseDamage * otherCarPushShare * otherCarHitMultiplier;
+		}
+		int finalSelfDamage = Mathf.Clamp((int)Math.Floor(selfDamage), 0, maxCrashDamage);
+		int finalOtherCarDamage = Mathf.Clamp((int)Math.Ceiling(damageToOtherCar), 0, maxCrashDamage);
+
+
+		if (finalOtherCarDamage > 0)
+		{
+			otherCar.TakeDamage(finalOtherCarDamage, dirTowardsOtherCar * (crashSpeed * 0.4f), this);
+		}
+
+		if (finalSelfDamage > 0)
+		{
+			TakeDamage(finalSelfDamage, Vector2.Zero, otherCar);
+		}
+
+		hitCooldownTimer = hitCooldown;
+		otherCar.hitCooldownTimer = hitCooldown;
+
+		Velocity = normal * (crashSpeed * knockbackMultiplier);
+
+		myPreCollisionVelocity = Vector2.Zero;
+		otherCar.PreCollisionVelocity = Vector2.Zero;
+
+		OnCarCrashed(otherCar, finalOtherCarDamage);
+	}
+
 	protected float GetHitZoneMultiplier(Vector2 worldPosition)
 	{
 		Vector2 localPos = ToLocal(worldPosition);
-		if (GetNode<CollisionShape2D>("CollisionShape2D").Shape is RectangleShape2D rectangleShape)
-		{
-			float carLenght = rectangleShape.Size.X;
-		}
 
 		float BumperThreshold = (carLenght / 2.0f) * 0.8f;
 		if (localPos.X > BumperThreshold)
@@ -159,89 +334,6 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		return sideHitMultiplier;
 	}
 
-	protected virtual void HandleCollisions(Vector2 myPreCollisionVelocity)
-	{
-		if (hitCooldownTimer > 0) { return; }
-
-		int collisionCount = GetSlideCollisionCount();
-		for (int i = 0; i < collisionCount; i++)
-		{
-			KinematicCollision2D collision2D = GetSlideCollision(i);
-			Node collider = (Node)collision2D.GetCollider();
-
-			if (collider is CarTemplate otherCar && collider != this)
-			{
-
-				if (otherCar.hitCooldownTimer > 0) { continue; }
-
-				Vector2 relativeVelocity = myPreCollisionVelocity - otherCar.PreCollisionVelocity;
-				float crashSpeed = relativeVelocity.Length();
-				if (crashSpeed < minSpeedToDamage) { continue; }
-
-				Vector2 normal = collision2D.GetNormal();
-				Vector2 dirTowardsOtherCar = -normal;
-
-				float myPush = Mathf.Max(0.0f, myPreCollisionVelocity.Dot(dirTowardsOtherCar));
-				float otherCarPush = Mathf.Max(0.0f, otherCar.PreCollisionVelocity.Dot(normal));
-				float totalPush = myPush + otherCarPush;
-
-				if (totalPush <= 1.0f) { continue; }
-
-				float myPushShare = myPush / totalPush;
-				float otherCarPushShare = otherCarPush / totalPush;
-
-				Vector2 collisionPoint = collision2D.GetPosition();
-				float baseDamage = Mathf.Clamp(crashSpeed / maxSpeedForward, 0f, 1f) * maxCrashDamage;
-				float damageToOtherCar;
-				float selfDamage;
-
-				float otherCarHitMultiplier = otherCar.GetHitZoneMultiplier(collisionPoint);
-
-				float myHitMultiplier = GetHitZoneMultiplier(collisionPoint);
-
-				if (otherCarPushShare <= 0.3f)
-				{
-					damageToOtherCar = baseDamage * otherCarHitMultiplier;
-					selfDamage = baseDamage * myHitMultiplier * selfRecoilMultiplier;
-				}
-				else if (myPushShare <= 0.3f)
-				{
-					selfDamage = baseDamage * myHitMultiplier;
-					damageToOtherCar = baseDamage * selfRecoilMultiplier * otherCarHitMultiplier;
-				}
-				else
-				{
-					selfDamage = baseDamage * myPushShare * myHitMultiplier;
-					damageToOtherCar = baseDamage * otherCarPushShare * otherCarHitMultiplier;
-				}
-				int finalSelfDamage = Mathf.Clamp((int)Math.Floor(selfDamage), 0, maxCrashDamage);
-				int finalOtherCarDamage = Mathf.Clamp((int)Math.Ceiling(damageToOtherCar), 0, maxCrashDamage);
-
-
-				if (finalOtherCarDamage > 0)
-				{
-					otherCar.TakeDamage(finalOtherCarDamage, dirTowardsOtherCar * (crashSpeed * 0.4f), this);
-				}
-
-				if (finalSelfDamage > 0)
-				{
-					TakeDamage(finalSelfDamage, Vector2.Zero, otherCar);
-				}
-
-				hitCooldownTimer = hitCooldown;
-				otherCar.hitCooldownTimer = hitCooldown;
-
-				Velocity = normal * (crashSpeed * knockbackMultiplier);
-
-				myPreCollisionVelocity = Vector2.Zero;
-				otherCar.PreCollisionVelocity = Vector2.Zero;
-
-				OnCarCrashed(otherCar, finalOtherCarDamage);
-				break;
-			}
-		}
-	}
-
 	public virtual void TakeDamage(int damage, Vector2 impactForce, Node2D attacker)
 	{
 		currentHealth -= damage;
@@ -249,11 +341,41 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 		if (currentHealth <= 0)
 		{
-			Die();
+			GameOverCheck();
 		}
 	}
 
 	protected virtual void OnCarCrashed(IDamageable target, float damageDealt) { }
+
+	private void GameOverCheck()
+	{
+		if (IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") == 1)
+		{
+			HandleGameOver(_hasPlayerWon = false);
+		}
+		else if (IsInGroup("Enemies") && GetTree().GetNodeCountInGroup("Enemies") == 1)
+		{
+			HandleGameOver(_hasPlayerWon = true);
+		}
+		else
+		{
+			Die();
+		}
+	}
+
+	protected void HandleGameOver(bool hasPlayerWon)
+	{
+		var GameOverScene = GD.Load<PackedScene>("res://Scenes/GameOver.tscn");
+		GameOverUI GameOverInstance = GameOverScene.Instantiate<GameOverUI>();
+
+		GameOverInstance.GameOverWin = hasPlayerWon;
+
+		Node thisScene = GetTree().CurrentScene;
+		GetTree().Root.AddChild(GameOverInstance);
+		GetTree().CurrentScene = GameOverInstance;
+
+		thisScene.QueueFree();
+	}
 
 	protected virtual void Die()
 	{

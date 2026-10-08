@@ -2,11 +2,11 @@ using Godot;
 
 public partial class PlayerCar : CarTemplate
 {
-		
-		private string _forward = "Forward";
-		private string _left = "Left";
-		private string _right = "Right";
-		private string _backward = "Backward";
+
+	private string _forward = "Forward";
+	private string _left = "Left";
+	private string _right = "Right";
+	private string _backward = "Backward";
 
 	public override void _Ready()
 	{
@@ -18,11 +18,11 @@ public partial class PlayerCar : CarTemplate
 
 	private void SetInputs()
 	{
-	if ( GetTree().GetFirstNodeInGroup("Players") != this)
+		if (GetTree().GetFirstNodeInGroup("Players") != this)
 		{
 			_right = "Right_P2";
 			_left = "Left_P2";
-			_forward = "Forward_P2"; 
+			_forward = "Forward_P2";
 			_backward = "Backward_P2";
 		}
 	}

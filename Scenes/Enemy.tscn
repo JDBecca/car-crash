@@ -3,17 +3,22 @@
 [ext_resource type="Script" uid="uid://boolrdx80wiav" path="res://Scripts/EnemyAI.cs" id="1_wovta"]
 [ext_resource type="Texture2D" uid="uid://dh8eq38wnsr0k" path="res://Assets/Sprites/red_car_sprite.png" id="2_wovta"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_wovta"]
-size = Vector2(12, 6)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wovta"]
+radius = 4.0
+height = 13.0
 
 [node name="Enemy" type="CharacterBody2D" unique_id=899399180]
+motion_mode = 1
+platform_on_leave = 2
+platform_floor_layers = 0
 script = ExtResource("1_wovta")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=239527974]
-position = Vector2(-7.1525574e-07, -1)
+position = Vector2(-5.684342e-14, 0)
 scale = Vector2(0.4375, 0.5)
 texture = ExtResource("2_wovta")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1363940065]
-position = Vector2(0, -1)
-shape = SubResource("RectangleShape2D_wovta")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1803123402]
+rotation = 1.5707964
+scale = Vector2(0.8, 1)
+shape = SubResource("CapsuleShape2D_wovta")

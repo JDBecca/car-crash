@@ -1,18 +1,27 @@
 [gd_scene format=3 uid="uid://b6y5a3vjepwx8"]
 
-[ext_resource type="Script" uid="uid://bwn1f5h7e6km0" path="res://Scripts/PlayerCar.cs" id="1_v0iea"]
+[ext_resource type="Script" uid="uid://bwn1f5h7e6km0" path="res://Scripts/PlayerCar.cs" id="1_kyqiw"]
 [ext_resource type="Texture2D" uid="uid://bx1ce0yx7uss4" path="res://Assets/Sprites/Player/car_sprite.png" id="2_kyqiw"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_cvnsp"]
-size = Vector2(12, 6)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kyqiw"]
+radius = 4.0
+height = 13.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1006662170]
-script = ExtResource("1_v0iea")
+rotation = 0.00025750452
+motion_mode = 1
+floor_stop_on_slope = false
+floor_block_on_wall = false
+platform_on_leave = 2
+platform_floor_layers = 0
+script = ExtResource("1_kyqiw")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1417316138]
-position = Vector2(-8.940697e-07, 0)
+position = Vector2(-3.3881318e-21, 1.6543612e-24)
 scale = Vector2(0.4375, 0.5)
 texture = ExtResource("2_kyqiw")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1831739033]
-shape = SubResource("RectangleShape2D_cvnsp")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=455756304]
+rotation = 1.5707964
+scale = Vector2(0.8, 1)
+shape = SubResource("CapsuleShape2D_kyqiw")

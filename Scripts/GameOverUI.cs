@@ -1,0 +1,25 @@
+using Godot;
+using System;
+
+public partial class GameOverUI : Control
+{
+
+	public bool GameOverWin = false;
+
+	public override void _Ready()
+	{
+		if (GameOverWin == true)
+		{
+			GetNode<Label>("%GameOverStateLabel").Text = "YOU WON";
+		}
+		else
+		{
+			GetNode<Label>("%GameOverStateLabel").Text = "YOU LOSE";
+		}
+	}
+
+	// Called every frame. 'delta' is the elapsed time since the previous frame.
+	public override void _Process(double delta)
+	{
+	}
+}
