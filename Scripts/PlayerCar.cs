@@ -27,7 +27,9 @@ public partial class PlayerCar : CarTemplate
 			_backward = "Backward_P2";
 			playerID = 2;
 			Sprite2D sprite2D = GetNode<Sprite2D>("Sprite2D");
+			Vector2 textureSize = sprite2D.Scale;
 			sprite2D.Texture = GD.Load<Texture2D>("res://Assets/Sprites/red_car_sprite.png");
+			sprite2D.Scale = textureSize;
 		}
 	}
 	protected override void CarInputs(double delta)
