@@ -7,9 +7,10 @@ public partial class PlayerCar : CarTemplate
 	private string _left = "Left";
 	private string _right = "Right";
 	private string _backward = "Backward";
-
+	
 	public override void _Ready()
 	{
+		playerID = 1;
 		base._Ready();
 		AddToGroup("Players");
 		AddToGroup("Cars");
@@ -24,6 +25,9 @@ public partial class PlayerCar : CarTemplate
 			_left = "Left_P2";
 			_forward = "Forward_P2";
 			_backward = "Backward_P2";
+			playerID = 2;
+			Sprite2D sprite2D = GetNode<Sprite2D>("Sprite2D");
+			sprite2D.Texture = GD.Load<Texture2D>("res://Assets/Sprites/red_car_sprite.png");
 		}
 	}
 	protected override void CarInputs(double delta)

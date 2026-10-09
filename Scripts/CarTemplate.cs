@@ -16,6 +16,8 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	protected float carLenght;
 	protected float carWidth;
 
+	protected int playerID = 0;
+
 	protected Vector2 acceleration = Vector2.Zero; //- Units/s squared
 
 	protected float wheelDistance = 12.0f; //- Units
@@ -351,24 +353,30 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	{
 		if (IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") == 1)
 		{
-			HandleGameOver(_hasPlayerWon = false);
+			HandleGameOver(_hasPlayerWon = false, 0);
+		}
+		else if (IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") >= 1 && GetTree().GetNodeCountInGroup("Enemies") <= 0)
+		{
+			int attackerPlayerID;
+			if (playerID == 1) { attackerPlayerID = 2; }
+			else { attackerPlayerID = 1; }
+			HandleGameOver(_hasPlayerWon = true, attackerPlayerID);
 		}
 		else if (IsInGroup("Enemies") && GetTree().GetNodeCountInGroup("Enemies") == 1)
 		{
-			HandleGameOver(_hasPlayerWon = true);
+			HandleGameOver(_hasPlayerWon = true, 0);
 		}
-		else
-		{
-			Die();
-		}
+		Die();
+		
 	}
 
-	protected void HandleGameOver(bool hasPlayerWon)
+	protected void HandleGameOver(bool hasPlayerWon, int attackerPlayerID)
 	{
 		var GameOverScene = GD.Load<PackedScene>("res://Scenes/GameOver.tscn");
 		GameOverUI GameOverInstance = GameOverScene.Instantiate<GameOverUI>();
 
 		GameOverInstance.GameOverWin = hasPlayerWon;
+		GameOverInstance.playerWinID = attackerPlayerID;
 
 		Node thisScene = GetTree().CurrentScene;
 		GetTree().Root.AddChild(GameOverInstance);

@@ -47,13 +47,15 @@ label_settings = SubResource("LabelSettings_idj7w")
 
 [node name="HPLabel_P2" type="Label" parent="UI/HUD" unique_id=1990249664]
 layout_mode = 0
-offset_left = 216.0
-offset_right = 256.0
+offset_left = 189.0
+offset_right = 229.0
 offset_bottom = 23.0
 label_settings = SubResource("LabelSettings_idj7w")
+vertical_alignment = 1
 
 [node name="Player" parent="." unique_id=1006662170 instance=ExtResource("2_gl6un")]
 position = Vector2(56, 96)
 
 [node name="Player2" parent="." unique_id=268105199 instance=ExtResource("2_gl6un")]
 position = Vector2(176, 120)
+rotation = 3.1415927
