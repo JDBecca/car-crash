@@ -39,7 +39,8 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	protected float frontBumperHitMultiplier = 0.4f;
 	protected float backBumperHitMultiplier = 1.6f;
 	protected float sideHitMultiplier = 1.0f;
-	protected float knockbackMultiplier = 0.6f;
+	protected float minKnockbackMultiplier = 0.3f;
+	protected float maxKnockbackMultiplier = 0.7f;
 
 	protected float SteerInput = 0.0f;
 	protected float ThrottleInput = 0.0f;
@@ -52,10 +53,10 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	{
 		currentHealth = maxHealth;
 
-		if (GetNode<CollisionShape2D>("CollisionShape2D").Shape is CapsuleShape2D carShape)
+		if (GetNode<CollisionShape2D>("CollisionShape2D").Shape is RectangleShape2D carShape)
 		{
-			carLenght = carShape.Height;
-			carWidth = carShape.Radius;
+			carLenght = carShape.Size.X;
+			carWidth = carShape.Size.Y;
 		}
 	}
 
@@ -211,7 +212,6 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 		if (localCollision.Y > roundedThreshold && isFrontRearCollision && ThrottleInput != 0)
 		{
-			GD.Print("Angulo DER: " + (collisionAngle));
 			float angleDiffBefore = Mathf.AngleDifference(Rotation, wantedWallAngle);
 
 			_rotateAngle = -Mathf.DegToRad(collisionAngle);
@@ -226,7 +226,6 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		}
 		else if (localCollision.Y < -roundedThreshold && isFrontRearCollision && ThrottleInput != 0)
 		{
-			GD.Print("Angulo: " + (collisionAngle));
 			float angleDiffBefore = Mathf.AngleDifference(Rotation, wantedWallAngle);
 
 			_rotateAngle = Mathf.DegToRad(collisionAngle);
@@ -254,7 +253,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 		Vector2 relativeVelocity = myPreCollisionVelocity - otherCar.PreCollisionVelocity;
 		float crashSpeed = relativeVelocity.Length();
-		if (crashSpeed < minSpeedToDamage) { return; }
+		if (crashSpeed < minSpeedToDamage) { Velocity *= 0.8f; return; }
 
 		Vector2 normal = collision2D.GetNormal();
 		Vector2 dirTowardsOtherCar = -normal;
@@ -300,7 +299,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 		if (finalOtherCarDamage > 0)
 		{
-			otherCar.TakeDamage(finalOtherCarDamage, dirTowardsOtherCar * (crashSpeed * 0.4f), this);
+			otherCar.TakeDamage(finalOtherCarDamage, dirTowardsOtherCar * (crashSpeed * Mathf.Lerp(minKnockbackMultiplier, maxKnockbackMultiplier, myPushShare)), this);
 		}
 
 		if (finalSelfDamage > 0)
@@ -311,7 +310,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		hitCooldownTimer = hitCooldown;
 		otherCar.hitCooldownTimer = hitCooldown;
 
-		Velocity = normal * (crashSpeed * knockbackMultiplier);
+		Velocity = normal * (crashSpeed * Mathf.Lerp(minKnockbackMultiplier, maxKnockbackMultiplier, myPushShare));
 
 		myPreCollisionVelocity = Vector2.Zero;
 		otherCar.PreCollisionVelocity = Vector2.Zero;

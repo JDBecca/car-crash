@@ -54,8 +54,7 @@ label_settings = SubResource("LabelSettings_idj7w")
 vertical_alignment = 1
 
 [node name="Player" parent="." unique_id=1006662170 instance=ExtResource("2_gl6un")]
-position = Vector2(56, 96)
+position = Vector2(32, 112)
 
-[node name="Player2" parent="." unique_id=268105199 instance=ExtResource("2_gl6un")]
-position = Vector2(176, 120)
-rotation = 3.1415927
+[node name="Player2" parent="." unique_id=186780294 instance=ExtResource("2_gl6un")]
+position = Vector2(137.99998, 67.99999)

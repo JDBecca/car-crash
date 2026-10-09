@@ -3,9 +3,8 @@
 [ext_resource type="Script" uid="uid://bwn1f5h7e6km0" path="res://Scripts/PlayerCar.cs" id="1_kyqiw"]
 [ext_resource type="Texture2D" uid="uid://bx1ce0yx7uss4" path="res://Assets/Sprites/Player/car_sprite.png" id="2_kyqiw"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kyqiw"]
-radius = 4.0
-height = 13.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kyqiw"]
+size = Vector2(6, 9.5)
 
 [node name="Player" type="CharacterBody2D" unique_id=1006662170]
 rotation = 0.00025750452
@@ -22,6 +21,7 @@ scale = Vector2(0.4375, 0.5)
 texture = ExtResource("2_kyqiw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=455756304]
+position = Vector2(-0.0003860761, -0.0006439406)
 rotation = 1.5707964
-scale = Vector2(0.8, 1)
-shape = SubResource("CapsuleShape2D_kyqiw")
+scale = Vector2(1, 1.25)
+shape = SubResource("RectangleShape2D_kyqiw")
