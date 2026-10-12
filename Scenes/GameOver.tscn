@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bo663p0w6eijw" path="res://Scripts/GameOverUI.cs" id="1_k52d1"]
 [ext_resource type="Script" uid="uid://dux0kqmtdnb42" path="res://Scripts/GameOverButtons.cs" id="2_k52d1"]
+[ext_resource type="Script" uid="uid://clisvej4t61ow" path="res://Scripts/LoginControl.cs" id="3_ktc4i"]
 
 [node name="Control" type="Control" unique_id=1509686705]
 layout_mode = 3
@@ -22,30 +23,75 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer" unique_id=727959889]
 layout_mode = 2
-theme_override_constants/separation = 50
+theme_override_constants/separation = 10
+script = ExtResource("2_k52d1")
 
-[node name="UI" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1498450876]
+[node name="LabelsContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1498450876]
 layout_mode = 2
 
-[node name="GameOverLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/UI" unique_id=413217204]
+[node name="GameOverLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LabelsContainer" unique_id=413217204]
 layout_mode = 2
 text = "GAME OVER"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="GameOverStateLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/UI" unique_id=35066881]
+[node name="GameOverStateLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LabelsContainer" unique_id=35066881]
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=312196902]
+[node name="LoginContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1883853800]
+layout_mode = 2
+script = ExtResource("3_ktc4i")
+
+[node name="UserNameContainer" type="HBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer" unique_id=418591497]
 layout_mode = 2
 size_flags_horizontal = 4
-script = ExtResource("2_k52d1")
+theme_override_constants/separation = 8
 
-[node name="Button" type="Button" parent="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer" unique_id=2028819471]
+[node name="UserNameLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer/UserNameContainer" unique_id=1353328514]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Exit"
+text = "Name"
 
-[connection signal="pressed" from="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer/Button" to="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer" method="OnExitButtonPressed"]
+[node name="UserNameInput" type="LineEdit" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer/UserNameContainer" unique_id=1647299636]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "ABCD"
+alignment = 1
+max_length = 4
+
+[node name="UserPasswordContainer" type="HBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer" unique_id=446599891]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="UserPasswordLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer/UserPasswordContainer" unique_id=1884859522]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pass"
+
+[node name="UserPasswordInput" type="LineEdit" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer/UserPasswordContainer" unique_id=1948977855]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "PASS"
+alignment = 1
+virtual_keyboard_type = 6
+secret = true
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1281621435]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="ContinueButton" type="Button" parent="MarginContainer/CenterContainer/VBoxContainer/ButtonsContainer" unique_id=1697948262]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="Button" type="Button" parent="MarginContainer/CenterContainer/VBoxContainer/ButtonsContainer" unique_id=2028819471]
+layout_mode = 2
+text = "EXIT"
+
+[connection signal="pressed" from="MarginContainer/CenterContainer/VBoxContainer/ButtonsContainer/ContinueButton" to="MarginContainer/CenterContainer/VBoxContainer" method="OnContinueButtonPressed"]
+[connection signal="pressed" from="MarginContainer/CenterContainer/VBoxContainer/ButtonsContainer/Button" to="MarginContainer/CenterContainer/VBoxContainer" method="OnExitButtonPressed"]

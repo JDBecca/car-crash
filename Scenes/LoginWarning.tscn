@@ -1,0 +1,80 @@
+[gd_scene format=3 uid="uid://cxrjowqiaixll"]
+
+[ext_resource type="Script" uid="uid://c0epefeuxgm0n" path="res://Scripts/LoginWarningButtons.cs" id="1_nnlhx"]
+[ext_resource type="Script" uid="uid://dqkwjl8xtexfr" path="res://Scripts/LoginWarningLabel.cs" id="1_uypa0"]
+
+[node name="LoginWarning" type="Control" unique_id=1825491938]
+light_mask = 2
+visibility_layer = 2
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=1244497705]
+layer = 2
+
+[node name="Container" type="MarginContainer" parent="UILayer" unique_id=1066990458]
+light_mask = 7
+visibility_layer = 7
+offset_right = 256.0
+offset_bottom = 224.0
+
+[node name="CenterContainer" type="CenterContainer" parent="UILayer/Container" unique_id=1496126426]
+light_mask = 3
+visibility_layer = 3
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="UILayer/Container/CenterContainer" unique_id=1103570842]
+layout_mode = 2
+theme_override_constants/separation = 41
+
+[node name="LabelsContainer" type="VBoxContainer" parent="UILayer/Container/CenterContainer/VBoxContainer2" unique_id=1117255328]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("1_uypa0")
+
+[node name="WarningLabel" type="Label" parent="UILayer/Container/CenterContainer/VBoxContainer2/LabelsContainer" unique_id=394898554]
+unique_name_in_owner = true
+custom_maximum_size = Vector2(230, 224)
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="UILayer/Container/CenterContainer/VBoxContainer2/LabelsContainer" unique_id=1609160206]
+unique_name_in_owner = true
+custom_maximum_size = Vector2(230, 224)
+layout_mode = 2
+theme_override_constants/line_spacing = -1
+theme_override_constants/paragraph_spacing = -1
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="UILayer/Container/CenterContainer/VBoxContainer2" unique_id=684455933]
+unique_name_in_owner = true
+propagate_maximum_size = false
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("1_nnlhx")
+
+[node name="NewUserButton" type="Button" parent="UILayer/Container/CenterContainer/VBoxContainer2/ButtonsContainer" unique_id=486874673]
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="BackButton" type="Button" parent="UILayer/Container/CenterContainer/VBoxContainer2/ButtonsContainer" unique_id=1001634541]
+layout_mode = 2
+text = "BACK"
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="." unique_id=774183777]
+
+[node name="ColorRect" type="ColorRect" parent="BackgroundLayer" unique_id=1259783994]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 272.0
+offset_bottom = 240.0
+color = Color(0.13319641, 0.13319641, 0.13319635, 0.9098039)
+
+[connection signal="pressed" from="UILayer/Container/CenterContainer/VBoxContainer2/ButtonsContainer/NewUserButton" to="UILayer/Container/CenterContainer/VBoxContainer2/ButtonsContainer" method="OnNewUserButtonPressed"]
+[connection signal="pressed" from="UILayer/Container/CenterContainer/VBoxContainer2/ButtonsContainer/BackButton" to="UILayer/Container/CenterContainer/VBoxContainer2/ButtonsContainer" method="OnBackButtonPressed"]

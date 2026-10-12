@@ -136,10 +136,8 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 	private void ApplyFriction()
 	{
-		if (Velocity.Length() < 2.5f)
-		{
-			Velocity = Vector2.Zero;
-		}
+		if (Velocity.Length() < 2.5f) { Velocity = Vector2.Zero; }
+
 		bool noInput = Mathf.IsZeroApprox(ThrottleInput) && Mathf.IsZeroApprox(SteerInput);
 
 		float currentFriction = noInput ? brakingFriction : friction;
@@ -147,10 +145,8 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		float dot = Velocity.Dot(Transform.X);
 		Vector2 frictionForce = Velocity * -currentFriction;
 		Vector2 airDragForce = Velocity * Velocity.Length() * -airDrag;
-		if (Velocity.Length() > 500)
-		{
-			frictionForce *= 3;
-		}
+		if (Velocity.Length() > 500) { frictionForce *= 3; }
+
 		acceleration += airDragForce + frictionForce;
 	}
 
@@ -173,10 +169,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 				HandleCarRamming(preCollisionVelocity, collision2D, otherCar);
 			}
 		}
-		if (collisionCount == 0)
-		{
-			externalFriction = 0;
-		}
+		if (collisionCount == 0) { externalFriction = 0; }
 	}
 
 	protected void HandleWallCollision(KinematicCollision2D collision2D, Vector2 normal, double delta)
@@ -189,14 +182,8 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		Vector2 localCollision = ToLocal(collision2D.GetPosition());
 		Vector2 rearWheel = Position - Transform.X * wheelDistance / 2.0f;
 
-		if (localCollision.X > BumperThreshold)
-		{
-			isFrontRearCollision = true;
-		}
-		else if (localCollision.X < -BumperThreshold)
-		{
-			isFrontRearCollision = true;
-		}
+		if (localCollision.X > BumperThreshold) { isFrontRearCollision = true; }
+		else if (localCollision.X < -BumperThreshold) { isFrontRearCollision = true; }
 
 		Vector2 wallTangent = new Vector2(-normal.Y, normal.X);
 		Vector2 wallDirection = Transform.X.Dot(wallTangent) >= 0 ? wallTangent : -wallTangent;
@@ -323,14 +310,8 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		Vector2 localPos = ToLocal(worldPosition);
 
 		float BumperThreshold = (carLenght / 2.0f) * 0.8f;
-		if (localPos.X > BumperThreshold)
-		{
-			return frontBumperHitMultiplier;
-		}
-		else if (localPos.X < -BumperThreshold)
-		{
-			return backBumperHitMultiplier;
-		}
+		if (localPos.X > BumperThreshold) { return frontBumperHitMultiplier; }
+		else if (localPos.X < -BumperThreshold) { return backBumperHitMultiplier; }
 
 		return sideHitMultiplier;
 	}
@@ -340,10 +321,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		currentHealth -= damage;
 		Velocity += impactForce;
 
-		if (currentHealth <= 0)
-		{
-			GameOverCheck();
-		}
+		if (currentHealth <= 0) { GameOverCheck(); }
 	}
 
 	protected virtual void OnCarCrashed(IDamageable target, float damageDealt) { }
@@ -366,7 +344,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 			HandleGameOver(_hasPlayerWon = true, 0);
 		}
 		Die();
-		
+
 	}
 
 	protected void HandleGameOver(bool hasPlayerWon, int attackerPlayerID)
@@ -377,11 +355,11 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		GameOverInstance.GameOverWin = hasPlayerWon;
 		GameOverInstance.playerWinID = attackerPlayerID;
 
-		Node thisScene = GetTree().CurrentScene;
+		Node gameScene = GetTree().CurrentScene;
 		GetTree().Root.AddChild(GameOverInstance);
 		GetTree().CurrentScene = GameOverInstance;
 
-		thisScene.QueueFree();
+		gameScene.QueueFree();
 	}
 
 	protected virtual void Die()
