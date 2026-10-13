@@ -34,7 +34,7 @@ public partial class LoginControl : VBoxContainer
 			else { EmitSignal(SignalName.LoginCompleted, false, "non-existent Name"); }
 
 			var LoginWarning = GD.Load<PackedScene>("res://Scenes/LoginWarning.tscn");
-			Control LoginWarningInstance = LoginWarning.Instantiate<Control>();
+			CanvasLayer LoginWarningInstance = LoginWarning.Instantiate<CanvasLayer>();
 			GetTree().Root.AddChild(LoginWarningInstance);
 			LoginWarningLabel loginWarningLabels = LoginWarningInstance.GetNode<LoginWarningLabel>("%LabelsContainer");
 			LoginWarningButtons loginWarningButtons = LoginWarningInstance.GetNode<LoginWarningButtons>("%ButtonsContainer");
