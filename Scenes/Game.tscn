@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dtg23015j6nxi"]
 
+[ext_resource type="Script" uid="uid://b63oa0pjieiac" path="res://Scripts/GameLogic.cs" id="1_kldst"]
 [ext_resource type="Script" uid="uid://bkblrdsx4vxwu" path="res://Scripts/HUDControl.cs" id="1_kln2b"]
 [ext_resource type="PackedScene" uid="uid://b6y5a3vjepwx8" path="res://Scenes/Player.tscn" id="2_gl6un"]
 [ext_resource type="PackedScene" uid="uid://c15ccfkayig4e" path="res://Scenes/Enemy.tscn" id="3_j5yw3"]
@@ -9,7 +10,10 @@ size = Vector2(35, 271.5)
 
 [sub_resource type="LabelSettings" id="LabelSettings_idj7w"]
 
-[node name="Main" type="Node2D" unique_id=827022659]
+[node name="Main" type="Control" unique_id=720526830]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_kldst")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1452642018]
 
@@ -56,14 +60,8 @@ vertical_alignment = 1
 
 [node name="Player" parent="." unique_id=1006662170 instance=ExtResource("2_gl6un")]
 position = Vector2(31.999996, 32)
+scale = Vector2(0.99999994, 0.99999994)
 
 [node name="Enemy" parent="." unique_id=899399180 instance=ExtResource("3_j5yw3")]
 position = Vector2(216, 24)
 rotation = 2.9831393
-
-[node name="Enemy2" parent="." unique_id=15187696 instance=ExtResource("3_j5yw3")]
-position = Vector2(216, 192)
-rotation = -3.0864134
-
-[node name="Enemy3" parent="." unique_id=1221983751 instance=ExtResource("3_j5yw3")]
-position = Vector2(32, 184)

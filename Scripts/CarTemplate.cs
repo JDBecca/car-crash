@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 
 public partial class CarTemplate : CharacterBody2D, IDamageable
 {
+	[Signal]
+	public delegate void CheckGameOverEventHandler(CarTemplate Caller);
 
 	[Export] protected float minRotationAngle = 25.0f; //- Degrees
 	[Export] private float _maxRotationAngle = 70.0f;
@@ -13,10 +15,14 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	[Export] protected float braking = 260.0f; //- Units/s squared
 	[Export] protected float maxSpeedForward = 150.0f; //- Units/s
 	[Export] protected float maxSpeedReverse = 120.0f; //- Units/s
+
+	private float hitCooldown = 0.3f;
+	internal float hitCooldownTimer = 0.0f;
+	protected int minSpeedToDamage = 60;
+	protected int maxCrashDamage = 35;
+
 	protected float carLenght;
 	protected float carWidth;
-
-	protected int playerID = 0;
 
 	protected Vector2 acceleration = Vector2.Zero; //- Units/s squared
 
@@ -32,10 +38,6 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	public int maxHealth { get; protected set; } = 100;
 	public int currentHealth { get; protected set; } = 100;
 	protected float recoilMultiplier = 0.07f;
-	protected float hitCooldown = 0.3f;
-	internal float hitCooldownTimer = 0.0f;
-	protected int minSpeedToDamage = 60;
-	protected int maxCrashDamage = 35;
 	protected float frontBumperHitMultiplier = 0.4f;
 	protected float backBumperHitMultiplier = 1.6f;
 	protected float sideHitMultiplier = 1.0f;
@@ -46,8 +48,6 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	protected float ThrottleInput = 0.0f;
 
 	public Vector2 PreCollisionVelocity { get; private set; } = Vector2.Zero;
-
-	protected bool _hasPlayerWon = false;
 
 	public override void _Ready()
 	{
@@ -321,46 +321,10 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		currentHealth -= damage;
 		Velocity += impactForce;
 
-		if (currentHealth <= 0) { GameOverCheck(); }
+		if (currentHealth <= 0) { EmitSignal(SignalName.CheckGameOver, this); Die();}
 	}
 
 	protected virtual void OnCarCrashed(IDamageable target, float damageDealt) { }
-
-	private void GameOverCheck()
-	{
-		if (IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") == 1)
-		{
-			HandleGameOver(_hasPlayerWon = false, 0);
-		}
-		else if (IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") >= 1 && GetTree().GetNodeCountInGroup("Enemies") <= 0)
-		{
-			int attackerPlayerID;
-			if (playerID == 1) { attackerPlayerID = 2; }
-			else { attackerPlayerID = 1; }
-			HandleGameOver(_hasPlayerWon = true, attackerPlayerID);
-		}
-		else if (IsInGroup("Enemies") && GetTree().GetNodeCountInGroup("Enemies") == 1)
-		{
-			HandleGameOver(_hasPlayerWon = true, 0);
-		}
-		Die();
-
-	}
-
-	protected void HandleGameOver(bool hasPlayerWon, int attackerPlayerID)
-	{
-		var GameOverScene = GD.Load<PackedScene>("res://Scenes/GameOver.tscn");
-		GameOverUI GameOverInstance = GameOverScene.Instantiate<GameOverUI>();
-
-		GameOverInstance.GameOverWin = hasPlayerWon;
-		GameOverInstance.playerWinID = attackerPlayerID;
-
-		Node gameScene = GetTree().CurrentScene;
-		GetTree().Root.AddChild(GameOverInstance);
-		GetTree().CurrentScene = GameOverInstance;
-
-		gameScene.QueueFree();
-	}
 
 	protected virtual void Die()
 	{

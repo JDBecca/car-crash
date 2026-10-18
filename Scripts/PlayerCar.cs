@@ -2,7 +2,7 @@ using Godot;
 
 public partial class PlayerCar : CarTemplate
 {
-
+	int playerID = 1;
 	private string _forward = "Forward";
 	private string _left = "Left";
 	private string _right = "Right";
@@ -10,7 +10,6 @@ public partial class PlayerCar : CarTemplate
 	
 	public override void _Ready()
 	{
-		playerID = 1;
 		base._Ready();
 		AddToGroup("Players");
 		AddToGroup("Cars");
