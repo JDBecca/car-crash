@@ -19,13 +19,13 @@ public partial class GameLogic : Control
 		{
 			HandleGameOver(_hasPlayerWon = false, 0);
 		}
-		int winnerPlayerID = 1;
 		if (Caller.IsInGroup("Enemies") && GetTree().GetNodeCountInGroup("Enemies") == 1)
 		{
-			HandleGameOver(_hasPlayerWon = true, winnerPlayerID);
+			HandleGameOver(_hasPlayerWon = true, 0);
 		}
 		else if (Caller.IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") >= 1 && GetTree().GetNodeCountInGroup("Enemies") <= 0)
 		{
+			int winnerPlayerID = 1;
 			if (GetTree().GetFirstNodeInGroup("Players") != Caller)
 			{
 				winnerPlayerID = 2;

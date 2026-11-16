@@ -19,9 +19,10 @@ public partial class GameOverButtons : LoginControl
 		string username = GetNode<LineEdit>("%UserNameInput").Text.Trim();
 		string password = GetNode<LineEdit>("%UserPasswordInput").Text;
 		string passwordHash = string.IsNullOrWhiteSpace(password) ? null : password.Sha256Text();
+		DateTime currentdate = DateTime.Now;
 		GetNode<Button>("%ContinueButton").Disabled = true;
 
-		bool success = await Authenticate(username, passwordHash);
+		bool success = await Authenticate(username, passwordHash, currentdate);
 
 		if (!success)
 		{

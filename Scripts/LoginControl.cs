@@ -12,7 +12,7 @@ public partial class LoginControl : VBoxContainer
 	{
 	}
 
-	protected async Task<bool> Authenticate(string username, string passwordHash)
+	protected async Task<bool> Authenticate(string username, string passwordHash, DateTime currentdate)
 	{
 		if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(passwordHash))
 		{
@@ -20,7 +20,7 @@ public partial class LoginControl : VBoxContainer
 			return false;
 		}
 
-		bool isAuthenticated = await MySqlManager.UserValidationAsync(username, passwordHash);
+		bool isAuthenticated = await MySqlManager.UserValidationAsync(username, passwordHash, currentdate);
 
 		if (isAuthenticated)
 		{
@@ -50,15 +50,16 @@ public partial class LoginControl : VBoxContainer
 	{
 		string username = GetNode<LineEdit>("%UserNameInput").Text.Trim();
 		string passwordHash = GetNode<LineEdit>("%UserPasswordInput").Text.Sha256Text();
+		DateTime currentdate = DateTime.Now;
 
 
-		bool isRegister = await MySqlManager.UserRegisterAsync(username, passwordHash);
+		bool isRegister = await MySqlManager.UserRegisterAsync(username, passwordHash, currentdate);
 
 		if (isRegister)
 		{
 			GD.Print("Register OK");
 
-			await Authenticate(username, passwordHash);
+			await Authenticate(username, passwordHash, currentdate);
 		}
 		else
 		{

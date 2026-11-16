@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://btlc8xew2kpp2"]
+
+[ext_resource type="Script" uid="uid://bpghc57t2rfui" path="res://Scripts/HealPickup.cs" id="1_cb3xv"]
+[ext_resource type="Texture2D" uid="uid://c3dy3luwi58pu" path="res://Assets/Sprites/HealBox.png" id="2_cb3xv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_22vsu"]
+size = Vector2(10, 10)
+
+[node name="HealBox" type="Node2D" unique_id=2045452247]
+script = ExtResource("1_cb3xv")
+
+[node name="PickupArea" type="Area2D" parent="." unique_id=117388500]
+
+[node name="Sprite2D" type="Sprite2D" parent="PickupArea" unique_id=1634899612]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("2_cb3xv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea" unique_id=128687185]
+shape = SubResource("RectangleShape2D_22vsu")
+
+[connection signal="body_entered" from="PickupArea" to="." method="OnPickupBodyEntered"]

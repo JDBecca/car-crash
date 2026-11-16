@@ -2,8 +2,10 @@
 
 [ext_resource type="Script" uid="uid://b63oa0pjieiac" path="res://Scripts/GameLogic.cs" id="1_kldst"]
 [ext_resource type="Script" uid="uid://bkblrdsx4vxwu" path="res://Scripts/HUDControl.cs" id="1_kln2b"]
+[ext_resource type="Texture2D" uid="uid://binusf5d8b61b" path="res://Assets/WIP/Background.png" id="2_b2bpf"]
 [ext_resource type="PackedScene" uid="uid://b6y5a3vjepwx8" path="res://Scenes/Player.tscn" id="2_gl6un"]
 [ext_resource type="PackedScene" uid="uid://c15ccfkayig4e" path="res://Scenes/Enemy.tscn" id="3_j5yw3"]
+[ext_resource type="PackedScene" uid="uid://btlc8xew2kpp2" path="res://Scenes/HealPickup.tscn" id="6_7lihs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_idj7w"]
 size = Vector2(35, 271.5)
@@ -14,6 +16,17 @@ size = Vector2(35, 271.5)
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_kldst")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1262970419]
+layer = -1
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer" unique_id=331947675]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_b2bpf")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1452642018]
 
@@ -65,3 +78,12 @@ scale = Vector2(0.99999994, 0.99999994)
 [node name="Enemy" parent="." unique_id=899399180 instance=ExtResource("3_j5yw3")]
 position = Vector2(216, 24)
 rotation = 2.9831393
+
+[node name="HealBox" parent="." unique_id=2045452247 instance=ExtResource("6_7lihs")]
+position = Vector2(116, 119)
+
+[node name="HealBox2" parent="." unique_id=830810122 instance=ExtResource("6_7lihs")]
+position = Vector2(77, 52)
+
+[node name="HealBox3" parent="." unique_id=1072867742 instance=ExtResource("6_7lihs")]
+position = Vector2(164, 173)

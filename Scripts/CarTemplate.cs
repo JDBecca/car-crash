@@ -326,6 +326,11 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 	protected virtual void OnCarCrashed(IDamageable target, float damageDealt) { }
 
+	public void Heal(int healing)
+	{
+		currentHealth += healing;
+	}
+
 	protected virtual void Die()
 	{
 		QueueFree();
