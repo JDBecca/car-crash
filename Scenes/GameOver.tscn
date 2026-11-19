@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bo663p0w6eijw" path="res://Scripts/GameOverUI.cs" id="1_k52d1"]
 [ext_resource type="Script" uid="uid://dux0kqmtdnb42" path="res://Scripts/GameOverButtons.cs" id="2_k52d1"]
-[ext_resource type="Script" uid="uid://clisvej4t61ow" path="res://Scripts/LoginControl.cs" id="3_ktc4i"]
 
 [node name="Control" type="Control" unique_id=1509686705]
 layout_mode = 3
@@ -46,7 +45,6 @@ vertical_alignment = 1
 
 [node name="LoginContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1883853800]
 layout_mode = 2
-script = ExtResource("3_ktc4i")
 
 [node name="UserNameContainer" type="HBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer" unique_id=418591497]
 layout_mode = 2

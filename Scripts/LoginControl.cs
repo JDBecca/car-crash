@@ -8,9 +8,6 @@ public partial class LoginControl : VBoxContainer
 	public delegate void LoginCompletedEventHandler(bool success, string message);
 
 	protected bool isUserNameTaken = false;
-	public override void _Ready()
-	{
-	}
 
 	protected async Task<bool> Authenticate(string username, string passwordHash, DateTime currentdate)
 	{

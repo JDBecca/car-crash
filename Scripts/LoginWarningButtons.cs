@@ -1,15 +1,10 @@
 using Godot;
 using System;
-using System.Threading.Tasks;
 
 public partial class LoginWarningButtons : LoginControl
 {
     [Signal]
     public delegate void RegisterUserEventHandler();
-    public override void _Ready()
-    {
-
-    }
 
     private void OnNewUserButtonPressed()
     {

@@ -1,3 +1,89 @@
 [gd_scene format=3 uid="uid://cw3u1inc25q5x"]
 
-[node name="Camera" type="Node2D" unique_id=1281878979]
+[ext_resource type="Script" uid="uid://2y5gjvok1jkl" path="res://Scripts/CameraManager.cs" id="1_yqtc1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l7xo0"]
+size = Vector2(256, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dwrb6"]
+size = Vector2(24, 240)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tahgg"]
+size = Vector2(256, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ush2"]
+size = Vector2(24, 240)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k5d5w"]
+size = Vector2(272, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q3uoa"]
+size = Vector2(16, 240)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fs1qa"]
+size = Vector2(274, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mu4rs"]
+size = Vector2(16, 240)
+
+[node name="CameraControl" type="Node2D" unique_id=1281878979 node_paths=PackedStringArray("_upWall", "_rightWall", "_downWall", "_leftWall", "_upTrigger", "_rightTrigger", "_downTrigger", "_leftTrigger")]
+script = ExtResource("1_yqtc1")
+_upWall = NodePath("MapBorders/UpWall")
+_rightWall = NodePath("MapBorders/RightWall")
+_downWall = NodePath("MapBorders/DownWall")
+_leftWall = NodePath("MapBorders/LeftWall")
+_upTrigger = NodePath("ScreenTriggers/UpTrigger")
+_rightTrigger = NodePath("ScreenTriggers/RightTrigger")
+_downTrigger = NodePath("ScreenTriggers/DownTrigger")
+_leftTrigger = NodePath("ScreenTriggers/LeftTrigger")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1783415024]
+anchor_mode = 0
+
+[node name="MapBorders" type="StaticBody2D" parent="." unique_id=923591307]
+
+[node name="UpWall" type="CollisionShape2D" parent="MapBorders" unique_id=2086747506]
+position = Vector2(128, -12)
+shape = SubResource("RectangleShape2D_l7xo0")
+
+[node name="RightWall" type="CollisionShape2D" parent="MapBorders" unique_id=1208750267]
+position = Vector2(268, 112)
+shape = SubResource("RectangleShape2D_dwrb6")
+
+[node name="DownWall" type="CollisionShape2D" parent="MapBorders" unique_id=1586783295]
+position = Vector2(128, 236)
+shape = SubResource("RectangleShape2D_tahgg")
+
+[node name="LeftWall" type="CollisionShape2D" parent="MapBorders" unique_id=1280947613]
+position = Vector2(-12, 112)
+shape = SubResource("RectangleShape2D_0ush2")
+
+[node name="ScreenTriggers" type="Node2D" parent="." unique_id=1726656536]
+
+[node name="UpTrigger" type="Area2D" parent="ScreenTriggers" unique_id=1035266051]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScreenTriggers/UpTrigger" unique_id=1158122530]
+position = Vector2(128, 0)
+shape = SubResource("RectangleShape2D_k5d5w")
+debug_color = Color(0.98393756, 0, 0.35274348, 0.41960785)
+
+[node name="RightTrigger" type="Area2D" parent="ScreenTriggers" unique_id=60900963]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScreenTriggers/RightTrigger" unique_id=238946282]
+position = Vector2(256, 112)
+shape = SubResource("RectangleShape2D_q3uoa")
+debug_color = Color(0.9701001, 0, 0.46014148, 0.41960785)
+
+[node name="DownTrigger" type="Area2D" parent="ScreenTriggers" unique_id=1734519636]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScreenTriggers/DownTrigger" unique_id=411622241]
+position = Vector2(128, 224)
+shape = SubResource("RectangleShape2D_fs1qa")
+debug_color = Color(0.96398276, 0, 0.49834257, 0.41960785)
+
+[node name="LeftTrigger" type="Area2D" parent="ScreenTriggers" unique_id=367333546]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScreenTriggers/LeftTrigger" unique_id=1131463099]
+position = Vector2(0, 112)
+shape = SubResource("RectangleShape2D_mu4rs")
+debug_color = Color(0.9665063, 0, 0.48308152, 0.41960785)

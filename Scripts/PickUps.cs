@@ -1,6 +1,5 @@
 using Godot;
 using System;
-using System.Runtime.Serialization;
 
 public partial class PickUps : Node2D
 {
@@ -10,11 +9,11 @@ public partial class PickUps : Node2D
 
 	public override void _PhysicsProcess(double delta)
 	{
-        HandlePlayerPicked();
+		HandlePlayerPicked();
 	}
 
-    private void HandlePlayerPicked()
-    {
-        
-    }
+	private void HandlePlayerPicked()
+	{
+
+	}
 }

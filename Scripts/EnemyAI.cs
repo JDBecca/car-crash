@@ -20,7 +20,6 @@ public partial class EnemyAI : CarTemplate
 
 	private float _desiredMaxRetreatDistance = 60.0f;
 	private float _desiredRetreatDistance = 60.0f;
-	private float _maxRetreatTime = 2.5f;
 	private float _retargetInterval = 1.0f;
 	private float _stuckCheckInterval = 0.5f;
 
@@ -150,7 +149,7 @@ public partial class EnemyAI : CarTemplate
 		{
 			if (currentHealth <= _minHealthForHeal)
 			{
-				SwitchState(AIState.SeekForHeal);		
+				SwitchState(AIState.SeekForHeal);
 			}
 			else
 			{
@@ -194,8 +193,6 @@ public partial class EnemyAI : CarTemplate
 
 	private void CheckStuck(float fdelta)
 	{
-		float nowTime = Time.GetTicksMsec() / 1000;
-
 		if (CurrentState == AIState.Unstuck) { return; }
 
 		if (Mathf.Abs(ThrottleInput) > 0.5f && Velocity.Length() < 25.0f)
@@ -244,7 +241,7 @@ public partial class EnemyAI : CarTemplate
 		if (state == AIState.TakeDistance && IsInstanceValid(_currentTarget))
 		{
 			Vector2 away = (GlobalPosition - _currentTarget.GlobalPosition).Normalized();
-			float randomAngle = (float)GD.RandRange( (_retreatDirection * Mathf.Pi) / 3.0f, Mathf.Pi / 3.0f);
+			float randomAngle = (float)GD.RandRange((_retreatDirection * Mathf.Pi) / 3.0f, Mathf.Pi / 3.0f);
 			_retreatPoint = away.Rotated(randomAngle);
 		}
 	}

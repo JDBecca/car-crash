@@ -1,7 +1,5 @@
 using Godot;
 using System;
-using System.Reflection.Metadata;
-using System.Text.RegularExpressions;
 
 public partial class CarTemplate : CharacterBody2D, IDamageable
 {
@@ -105,6 +103,13 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	{
 		float fDelta = (float)delta;
 
+		float forwardSpeed = Velocity.Dot(Transform.X);
+
+		Vector2 lateralVelocity = Velocity - (Transform.X * forwardSpeed);
+
+		float lateralFriction = 5.0f;
+		lateralVelocity = lateralVelocity.MoveToward(Vector2.Zero, lateralFriction * Velocity.Length() * fDelta);
+
 		Vector2 rearWheel = Position - Transform.X * wheelDistance / 2.0f;
 		Vector2 frontWheel = Position + Transform.X * wheelDistance / 2.0f;
 		rearWheel += Velocity * fDelta;
@@ -114,11 +119,11 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 		float direction = Velocity.Dot(Transform.X);
 
-		if (direction > 0 && Velocity.Length() > minSpeedToStopDrift)
+		if (forwardSpeed > 0 && Velocity.Length() > minSpeedToStopDrift)
 		{
 			Velocity = newHeading * Mathf.Min(Velocity.Length(), maxSpeedForward);
 		}
-		else if (direction < 0 && Velocity.Length() > minSpeedToStopDrift)
+		else if (forwardSpeed < 0 && Velocity.Length() > minSpeedToStopDrift)
 		{
 			Velocity = -newHeading * Mathf.Min(Velocity.Length(), maxSpeedReverse);
 		}
@@ -142,7 +147,6 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 		float currentFriction = noInput ? brakingFriction : friction;
 		if (externalFriction > 0) { currentFriction += externalFriction; }
-		float dot = Velocity.Dot(Transform.X);
 		Vector2 frictionForce = Velocity * -currentFriction;
 		Vector2 airDragForce = Velocity * Velocity.Length() * -airDrag;
 		if (Velocity.Length() > 500) { frictionForce *= 3; }
@@ -245,6 +249,20 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		Vector2 normal = collision2D.GetNormal();
 		Vector2 dirTowardsOtherCar = -normal;
 
+		float myCarVelocity = myPreCollisionVelocity.Dot(dirTowardsOtherCar);
+		float otherCarVelocity = otherCar.PreCollisionVelocity.Dot(dirTowardsOtherCar);
+
+		float closingSpeed = myCarVelocity - otherCarVelocity;
+
+		float impulseMagnitude = 0f;
+		if (closingSpeed > 0)
+		{
+			float restitution = 0.2f;
+			impulseMagnitude = closingSpeed * (1.0f + restitution) * 0.5f;
+		}
+
+		Vector2 impulseVector = dirTowardsOtherCar * impulseMagnitude;
+
 		float myPush = Mathf.Max(0.0f, myPreCollisionVelocity.Dot(dirTowardsOtherCar));
 		float otherCarPush = Mathf.Max(0.0f, otherCar.PreCollisionVelocity.Dot(normal));
 		float totalPush = myPush + otherCarPush;
@@ -286,7 +304,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 
 		if (finalOtherCarDamage > 0)
 		{
-			otherCar.TakeDamage(finalOtherCarDamage, dirTowardsOtherCar * (crashSpeed * Mathf.Lerp(minKnockbackMultiplier, maxKnockbackMultiplier, myPushShare)), this);
+			otherCar.TakeDamage(finalOtherCarDamage, impulseVector, this);
 		}
 
 		if (finalSelfDamage > 0)
@@ -297,9 +315,12 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		hitCooldownTimer = hitCooldown;
 		otherCar.hitCooldownTimer = hitCooldown;
 
-		Velocity = normal * (crashSpeed * Mathf.Lerp(minKnockbackMultiplier, maxKnockbackMultiplier, myPushShare));
+		Velocity -= impulseVector;
 
-		myPreCollisionVelocity = Vector2.Zero;
+		hitCooldownTimer = hitCooldown;
+		otherCar.hitCooldownTimer = hitCooldown;
+
+		PreCollisionVelocity = Vector2.Zero;
 		otherCar.PreCollisionVelocity = Vector2.Zero;
 
 		OnCarCrashed(otherCar, finalOtherCarDamage);
@@ -321,7 +342,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		currentHealth -= damage;
 		Velocity += impactForce;
 
-		if (currentHealth <= 0) { EmitSignal(SignalName.CheckGameOver, this); Die();}
+		if (currentHealth <= 0) { EmitSignal(SignalName.CheckGameOver, this); Die(); }
 	}
 
 	protected virtual void OnCarCrashed(IDamageable target, float damageDealt) { }

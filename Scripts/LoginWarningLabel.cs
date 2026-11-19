@@ -3,11 +3,6 @@ using System;
 
 public partial class LoginWarningLabel : LoginControl
 {
-	public override void _Ready()
-	{
-
-	}
-
 	public override void _Draw()
 	{
 		if (isUserNameTaken)
