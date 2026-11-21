@@ -22,17 +22,24 @@ public partial class LoginControl : VBoxContainer
 		if (isAuthenticated)
 		{
 			EmitSignal(SignalName.LoginCompleted, true, "Login successful!");
-			GetTree().ChangeSceneToFile("res://Scenes/MainMenu.tscn");
+			int? user_id = await MySqlManager.GetUserId(username, passwordHash);
+			if (user_id != null)
+			{
+				bool isScoreSaved = await MySqlManager.SaveScore((int)user_id, currentdate);
+				if (isScoreSaved) { ScoreManager.Instance.ResetScore(); GetTree().ChangeSceneToFile("res://Scenes/MainMenu.tscn"); }
+				else { return false; }
+			}
+			else { return false; }
 		}
 		else
 		{
 			isUserNameTaken = await MySqlManager.UsernameExists(username);
 			if (isUserNameTaken) { EmitSignal(SignalName.LoginCompleted, false, "Name already taken!"); }
-			else { EmitSignal(SignalName.LoginCompleted, false, "non-existent Name"); }
+			else { EmitSignal(SignalName.LoginCompleted, false, "Non-existent Name"); }
 
 			var LoginWarning = GD.Load<PackedScene>("res://Scenes/LoginWarning.tscn");
 			CanvasLayer LoginWarningInstance = LoginWarning.Instantiate<CanvasLayer>();
-			GetTree().Root.AddChild(LoginWarningInstance);
+			GetTree().CurrentScene.AddChild(LoginWarningInstance);
 			LoginWarningLabel loginWarningLabels = LoginWarningInstance.GetNode<LoginWarningLabel>("%LabelsContainer");
 			LoginWarningButtons loginWarningButtons = LoginWarningInstance.GetNode<LoginWarningButtons>("%ButtonsContainer");
 

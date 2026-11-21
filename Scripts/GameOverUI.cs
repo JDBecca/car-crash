@@ -21,5 +21,8 @@ public partial class GameOverUI : Control
 		{
 			GetNode<Label>("%GameOverStateLabel").Text = "YOU LOSE";
 		}
+
+		GetNode<Label>("%ScoreLabel").Text = $"Puntaje: {ScoreManager.Instance.Score}";
+
 	}
 }

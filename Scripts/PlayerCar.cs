@@ -44,4 +44,14 @@ public partial class PlayerCar : CarTemplate
 		ThrottleInput = Input.GetActionStrength(_forward) - Input.GetActionStrength(_backward);
 	}
 
+	protected override void OnCarCrashed(IDamageable target, float damageDealt, float hitZoneMultiplier)
+	{
+		GD.Print(damageDealt);
+		if (target is CarTemplate targetCar && targetCar.IsInGroup("Enemies"))
+		{
+			bool isRearHit = damageDealt > 0 && hitZoneMultiplier >= backBumperHitMultiplier;
+			int points = isRearHit ? 500 : 100;
+			ScoreManager.Instance.AddScore(points);
+		}
+	}
 }

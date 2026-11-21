@@ -246,7 +246,7 @@ public partial class EnemyAI : CarTemplate
 		}
 	}
 
-	protected override void OnCarCrashed(IDamageable target, float damageDealt)
+	protected override void OnCarCrashed(IDamageable target, float damageDealt, float hitZoneMultiplier)
 	{
 		_pursuitTimer = 0.0f;
 		_retreatDirection = -1;

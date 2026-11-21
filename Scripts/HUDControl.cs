@@ -9,6 +9,8 @@ public partial class HUDControl : Control
 		{
 			CarTemplate Player1 = (CarTemplate)GetTree().GetFirstNodeInGroup("Players");
 			GetNode<Label>("HPLabel_P1").Text = Player1.currentHealth.ToString();
+
+			GetNode<Label>("ScoreLabel").Text = $"Score: {ScoreManager.Instance.Score}";
 		}
 	}
 }

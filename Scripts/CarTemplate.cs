@@ -17,7 +17,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	private float hitCooldown = 0.3f;
 	internal float hitCooldownTimer = 0.0f;
 	protected int minSpeedToDamage = 60;
-	protected int maxCrashDamage = 35;
+	protected int maxCrashDamage = 40;
 
 	protected float carLenght;
 	protected float carWidth;
@@ -36,11 +36,11 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 	public int maxHealth { get; protected set; } = 100;
 	public int currentHealth { get; protected set; } = 100;
 	protected float recoilMultiplier = 0.07f;
-	protected float frontBumperHitMultiplier = 0.4f;
+	protected float frontBumperHitMultiplier = 0.8f;
 	protected float backBumperHitMultiplier = 1.6f;
 	protected float sideHitMultiplier = 1.0f;
 	protected float minKnockbackMultiplier = 0.3f;
-	protected float maxKnockbackMultiplier = 0.7f;
+	protected float maxKnockbackMultiplier = 1.0f;
 
 	protected float SteerInput = 0.0f;
 	protected float ThrottleInput = 0.0f;
@@ -295,8 +295,8 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		}
 		else
 		{
-			selfDamage = baseDamage * myPushShare * myHitMultiplier;
-			damageToOtherCar = baseDamage * otherCarPushShare * otherCarHitMultiplier;
+			selfDamage = baseDamage * otherCarPushShare * myHitMultiplier;
+			damageToOtherCar = baseDamage * myPushShare * otherCarHitMultiplier;
 		}
 		int finalSelfDamage = Mathf.Clamp((int)Math.Floor(selfDamage), 0, maxCrashDamage);
 		int finalOtherCarDamage = Mathf.Clamp((int)Math.Ceiling(damageToOtherCar), 0, maxCrashDamage);
@@ -323,7 +323,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		PreCollisionVelocity = Vector2.Zero;
 		otherCar.PreCollisionVelocity = Vector2.Zero;
 
-		OnCarCrashed(otherCar, finalOtherCarDamage);
+		OnCarCrashed(otherCar, finalOtherCarDamage, otherCarHitMultiplier);
 	}
 
 	protected float GetHitZoneMultiplier(Vector2 worldPosition)
@@ -345,7 +345,7 @@ public partial class CarTemplate : CharacterBody2D, IDamageable
 		if (currentHealth <= 0) { EmitSignal(SignalName.CheckGameOver, this); Die(); }
 	}
 
-	protected virtual void OnCarCrashed(IDamageable target, float damageDealt) { }
+	protected virtual void OnCarCrashed(IDamageable target, float damageDealt, float hitZoneMultiplier) { }
 
 	public void Heal(int healing)
 	{

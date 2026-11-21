@@ -59,20 +59,42 @@ offset_bottom = 23.0
 label_settings = SubResource("LabelSettings_idj7w")
 vertical_alignment = 1
 
+[node name="ScoreLabel" type="Label" parent="UI/HUD" unique_id=1278085277]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 152.0
+offset_top = -12.0
+offset_right = 192.0
+offset_bottom = 11.0
+grow_vertical = 2
+
 [node name="GoArrow" type="Control" parent="UI" unique_id=1135961392]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = -80.0
+offset_top = -56.0
+offset_right = -40.0
+offset_bottom = -16.0
 script = ExtResource("4_2irst")
 
 [node name="Label" type="Label" parent="UI/GoArrow" unique_id=237303807]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -21.5
+offset_top = -11.5
+offset_right = 21.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
 text = "GO ->"
 
-[node name="Player" parent="." unique_id=1006662170 instance=ExtResource("2_gl6un")]
+[node name="Player" parent="." unique_id=700098577 instance=ExtResource("2_gl6un")]
 position = Vector2(31.999996, 32)
 scale = Vector2(0.99999994, 0.99999994)
 

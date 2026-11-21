@@ -12,6 +12,7 @@ public partial class GameOverButtons : LoginControl
 	private void OnExitButtonPressed()
 	{
 		GetTree().ChangeSceneToFile("res://Scenes/MainMenu.tscn");
+		ScoreManager.Instance.ResetScore();
 	}
 
 	private async void OnContinueButtonPressed()

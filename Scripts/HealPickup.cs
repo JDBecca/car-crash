@@ -5,11 +5,11 @@ public partial class HealPickup : Node2D
 {
 	private int maxHealing = 50;
 
-    public override void _Ready()
-    {
-        AddToGroup("Pickups");
+	public override void _Ready()
+	{
+		AddToGroup("Pickups");
 		AddToGroup("HealingPickups");
-    }  
+	}
 	private void OnPickupBodyEntered(PhysicsBody2D body)
 	{
 		if (body is CarTemplate target)
@@ -34,6 +34,11 @@ public partial class HealPickup : Node2D
 		{
 			return;
 		}
+
+		if (target.IsInGroup("Players"))
+		{
+			ScoreManager.Instance.AddScore(50);
+		}
 		QueueFree();
-	} 
+	}
 }

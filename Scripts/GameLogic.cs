@@ -74,6 +74,8 @@ public partial class GameLogic : Control
 	{
 		if (!caller.IsInGroup("Enemies")) return;
 
+		ScoreManager.Instance.AddScore(1000);
+
 		_aliveEnemies--;
 		if (_aliveEnemies <= 0)
 		{
@@ -117,6 +119,7 @@ public partial class GameLogic : Control
 
 	private void OnCameraReachedPoint()
 	{
+		ScoreManager.Instance.AddScore(5000);
 		_currentSectionIndex++;
 		StartSection(_currentSectionIndex);
 	}
@@ -163,6 +166,8 @@ public partial class GameLogic : Control
 
 	protected void HandleGameOver(bool hasPlayerWon, int winnerPlayerID)
 	{
+		ScoreManager.Instance.AddScore(10000);
+
 		var GameOverScene = GD.Load<PackedScene>("res://Scenes/GameOver.tscn");
 		GameOverUI GameOverInstance = GameOverScene.Instantiate<GameOverUI>();
 

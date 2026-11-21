@@ -16,6 +16,10 @@ config/features=PackedStringArray("4.7", "C#", "GL Compatibility")
 run/max_fps=60
 config/icon="res://icon.svg"
 
+[autoload]
+
+ScoreManager="*uid://cri02hmqvbn4t"
+
 [display]
 
 window/size/viewport_width=256

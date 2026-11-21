@@ -19,7 +19,7 @@ public partial class LoginWarningButtons : LoginControl
 
     private void UnloadCurrentScene()
     {
-        var parentScene = GetTree().CurrentScene.GetParent();
+        var parentScene = GetTree().CurrentScene;
         if (parentScene != null)
         {
             var thisScene = parentScene.GetChild(1, true);

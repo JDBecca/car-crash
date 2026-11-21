@@ -43,6 +43,10 @@ layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="ScoreLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LabelsContainer" unique_id=124600116]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="LoginContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1883853800]
 layout_mode = 2
 
