@@ -1,3 +1,4 @@
 {
-    "godotTools.editorPath.godot4": "/usr/bin/godot"
+    "godotTools.editorPath.godot4": "/usr/bin/godot",
+    "dotnet.defaultSolution": "Car Crash.sln"
 }

@@ -2,72 +2,74 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 
-public partial class LoginControl : VBoxContainer
+public partial class LoginControl : Node
 {
-	[Signal]
-	public delegate void LoginCompletedEventHandler(bool success, string message);
+	[Export] private GameOverButtons _buttonsView = null!;
 
-	protected bool isUserNameTaken = false;
+	private readonly AuthService _authService = new();
 
-	protected async Task<bool> Authenticate(string username, string passwordHash, DateTime currentdate)
+	public override void _Ready()
 	{
-		if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(passwordHash))
-		{
-			EmitSignal(SignalName.LoginCompleted, false, "Empty fields.");
-			return false;
-		}
-
-		bool isAuthenticated = await MySqlManager.UserValidationAsync(username, passwordHash, currentdate);
-
-		if (isAuthenticated)
-		{
-			EmitSignal(SignalName.LoginCompleted, true, "Login successful!");
-			int? user_id = await MySqlManager.GetUserId(username, passwordHash);
-			if (user_id != null)
-			{
-				bool isScoreSaved = await MySqlManager.SaveScore((int)user_id, currentdate);
-				if (isScoreSaved) { ScoreManager.Instance.ResetScore(); GetTree().ChangeSceneToFile("res://Scenes/MainMenu.tscn"); }
-				else { return false; }
-			}
-			else { return false; }
-		}
-		else
-		{
-			isUserNameTaken = await MySqlManager.UsernameExists(username);
-			if (isUserNameTaken) { EmitSignal(SignalName.LoginCompleted, false, "Name already taken!"); }
-			else { EmitSignal(SignalName.LoginCompleted, false, "Non-existent Name"); }
-
-			var LoginWarning = GD.Load<PackedScene>("res://Scenes/LoginWarning.tscn");
-			CanvasLayer LoginWarningInstance = LoginWarning.Instantiate<CanvasLayer>();
-			GetTree().CurrentScene.AddChild(LoginWarningInstance);
-			LoginWarningLabel loginWarningLabels = LoginWarningInstance.GetNode<LoginWarningLabel>("%LabelsContainer");
-			LoginWarningButtons loginWarningButtons = LoginWarningInstance.GetNode<LoginWarningButtons>("%ButtonsContainer");
-
-			loginWarningLabels.isUserNameTaken = isUserNameTaken;
-			loginWarningButtons.RegisterUser += OnRegisterNewUser;
-		}
-
-		return isAuthenticated;
+		_buttonsView.LoginRequest += OnLoginRequest;
+		_buttonsView.ExitRequest += OnExitRequest;
 	}
 
-	protected async void OnRegisterNewUser()
+	private void OnExitRequest()
 	{
-		string username = GetNode<LineEdit>("%UserNameInput").Text.Trim();
-		string passwordHash = GetNode<LineEdit>("%UserPasswordInput").Text.Sha256Text();
+		ScoreManager.Instance.ResetScore();
+		GetTree().ChangeSceneToFile("res://Scenes/MainMenu.tscn");
+	}
+
+	private async void OnLoginRequest(string username, string password)
+	{
+		string passwordHash = password.Sha256Text();
 		DateTime currentdate = DateTime.Now;
+		int currentScore = ScoreManager.Instance.Score;
 
+		bool success = await _authService.AuthenticateAndSaveScore(username, passwordHash, currentScore, currentdate);
 
-		bool isRegister = await MySqlManager.UserRegisterAsync(username, passwordHash, currentdate);
-
-		if (isRegister)
+		if (success)
 		{
-			GD.Print("Register OK");
-
-			await Authenticate(username, passwordHash, currentdate);
+			OnLoginComplete();
 		}
 		else
 		{
-			GD.PrintErr("Register ERROR");
+			GetNode<Button>("%ContinueButton").Disabled = false;
+			await ShowWarning(username, passwordHash, currentScore, currentdate);
 		}
+	}
+
+	private async Task ShowWarning(string username, string passwordHash, int currentScore, DateTime currentDate)
+	{
+		var lookup = await _authService.LookupUsername(username);
+		bool userExist = lookup == MySqlManager.UsernameLookup.Found;
+
+		var warningScene = GD.Load<PackedScene>("res://Scenes/LoginWarning.tscn");
+		CanvasLayer warningInstance = warningScene.Instantiate<CanvasLayer>();
+		GetTree().CurrentScene.AddChild(warningInstance);
+
+		var labels = warningInstance.GetNode<LoginWarningLabel>("%LabelsContainer");
+		var buttons = warningInstance.GetNode<LoginWarningButtons>("%ButtonsContainer");
+
+		labels.SetMessage(userExist);
+
+		buttons.RegisterUser += async () =>
+		{
+			bool registered = await _authService.Register(username, passwordHash, currentDate);
+			if (registered)
+			{
+				bool logged = await _authService.AuthenticateAndSaveScore(username, passwordHash, currentScore, currentDate);
+				if (logged)
+				{
+					OnLoginComplete();
+				}
+			}
+		};
+	}
+
+	private void OnLoginComplete()
+	{
+		ScoreManager.Instance.ResetScore();
+		GetTree().ChangeSceneToFile("res://Scenes/Scoreboard.tscn");
 	}
 }

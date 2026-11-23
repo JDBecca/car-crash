@@ -1,7 +1,6 @@
 using Godot;
-using System;
 
-public partial class LoginWarningButtons : LoginControl
+public partial class LoginWarningButtons : VBoxContainer
 {
     [Signal]
     public delegate void RegisterUserEventHandler();
@@ -19,11 +18,6 @@ public partial class LoginWarningButtons : LoginControl
 
     private void UnloadCurrentScene()
     {
-        var parentScene = GetTree().CurrentScene;
-        if (parentScene != null)
-        {
-            var thisScene = parentScene.GetChild(1, true);
-            thisScene.QueueFree();
-        }
+        Owner?.QueueFree();
     }
 }

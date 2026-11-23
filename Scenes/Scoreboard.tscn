@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://b486min7ih2v7"]
+
+[ext_resource type="Script" uid="uid://bjvx6nmdchafh" path="res://Scripts/ScoreboardUI.cs" id="1_u0k5u"]
+[ext_resource type="Theme" uid="uid://bqjtoyowotyw2" path="res://Assets/Themes/Default.tres" id="2_4aqpc"]
+[ext_resource type="Script" uid="uid://e8a0w13owqwk" path="res://Scripts/MainMenu.cs" id="2_m4m53"]
+[ext_resource type="FontFile" uid="uid://ci2hujxnrmxgi" path="res://Assets/Fonts/golem-script.ttf" id="3_4aqpc"]
+
+[sub_resource type="Theme" id="Theme_rdiyk"]
+default_font = ExtResource("3_4aqpc")
+Label/colors/font_color = Color(1.4958686, 0.80986035, 0, 1)
+Text/base_type = &"Label"
+
+[node name="Scoreboard" type="Control" unique_id=248136116]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_u0k5u")
+_noEntryTextColor = Color(0.8, 0.152, 0.152, 1)
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=2138512398]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="Background" unique_id=235678667]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.08, 0.08, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=28280870]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=759472823]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1448471747]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_4aqpc")
+theme_type_variation = &"HeaderMedium"
+text = "LEADERBOARD"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer" unique_id=411580401]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+theme_override_constants/h_separation = 15
+columns = 4
+
+[node name="RankLabelHeader" type="Label" parent="MarginContainer/VBoxContainer/GridContainer" unique_id=2077082280]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_4aqpc")
+theme_override_colors/font_color = Color(0, 1, 0.015686275, 1)
+theme_override_font_sizes/font_size = 13
+text = "RANK"
+horizontal_alignment = 1
+
+[node name="UserLabelHeader" type="Label" parent="MarginContainer/VBoxContainer/GridContainer" unique_id=1101917007]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_4aqpc")
+theme_override_colors/font_color = Color(0, 0.8666668, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "NAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LastScoreHeader" type="Label" parent="MarginContainer/VBoxContainer/GridContainer" unique_id=1133503950]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_4aqpc")
+theme_override_colors/font_color = Color(0.015686275, 0, 0.41960785, 1)
+theme_override_font_sizes/font_size = 13
+text = "LAST-SCORE"
+horizontal_alignment = 1
+
+[node name="HighScoreHeader" type="Label" parent="MarginContainer/VBoxContainer/GridContainer" unique_id=301837142]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = SubResource("Theme_rdiyk")
+theme_override_font_sizes/font_size = 13
+text = "HIGH-SCORE"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1219605093]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 11
+script = ExtResource("2_m4m53")
+
+[node name="Label2" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=544757577]
+layout_mode = 2
+theme = ExtResource("2_4aqpc")
+text = "BACK"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Label2" to="MarginContainer/VBoxContainer/HBoxContainer" method="OnBackButtonPressed"]

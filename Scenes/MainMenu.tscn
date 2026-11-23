@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://ybsdmbinvjwu"]
 
+[ext_resource type="Theme" uid="uid://bqjtoyowotyw2" path="res://Assets/Themes/Default.tres" id="1_853f1"]
 [ext_resource type="Script" uid="uid://e8a0w13owqwk" path="res://Scripts/MainMenu.cs" id="1_tt5f1"]
 
 [node name="MainMenuControl" type="Control" unique_id=50087826]
@@ -10,40 +11,62 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Background" type="CanvasLayer" parent="." unique_id=277835510]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="Background" unique_id=348414427]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.08, 0.08, 1)
+
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=567174454]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -1.0
-offset_bottom = -1.0
+offset_top = 8.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="MarginContainer" unique_id=1570784062]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1746177083]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer" unique_id=1746177083]
-layout_mode = 2
-theme_override_constants/separation = 25
-
-[node name="Label" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1096490493]
-layout_mode = 2
-text = "SOME CAR GAME NAME"
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=106267577]
+[node name="GameTitleLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1096490493]
 layout_mode = 2
 size_flags_horizontal = 4
+theme = ExtResource("1_853f1")
+theme_override_font_sizes/font_size = 24
+text = "SUPER CAR RAMMING 
+ARENA"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=106267577]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
 theme_override_constants/separation = 11
 script = ExtResource("1_tt5f1")
 
-[node name="Label" type="Button" parent="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer2" unique_id=1048440836]
+[node name="StartButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=1048440836]
 layout_mode = 2
-text = "Start"
+theme = ExtResource("1_853f1")
+text = "START"
 
-[node name="Label2" type="Button" parent="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer2" unique_id=1634111700]
+[node name="ScoreboardButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=2011022834]
 layout_mode = 2
-text = "Exit"
+theme = ExtResource("1_853f1")
+text = "SCOREBOARD"
 
-[connection signal="pressed" from="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer2/Label" to="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer2" method="OnStartButtonPressed"]
-[connection signal="pressed" from="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer2/Label2" to="MarginContainer/CenterContainer/VBoxContainer/VBoxContainer2" method="OnQuitButtonPressed"]
+[node name="ExitButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=1634111700]
+layout_mode = 2
+theme = ExtResource("1_853f1")
+text = "EXIT"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ButtonsContainer/StartButton" to="MarginContainer/VBoxContainer/ButtonsContainer" method="OnStartButtonPressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ButtonsContainer/ScoreboardButton" to="MarginContainer/VBoxContainer/ButtonsContainer" method="OnScoreboardButtonPressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ButtonsContainer/ExitButton" to="MarginContainer/VBoxContainer/ButtonsContainer" method="OnQuitButtonPressed"]

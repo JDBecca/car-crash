@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class MainMenu : Control
 {
@@ -12,5 +11,15 @@ public partial class MainMenu : Control
 	private void OnQuitButtonPressed()
 	{
 		GetTree().Quit();
+	}
+
+	private void OnBackButtonPressed()
+	{
+		GetTree().ChangeSceneToFile("res://Scenes/MainMenu.tscn");
+	}
+
+	private void OnScoreboardButtonPressed()
+	{
+		GetTree().ChangeSceneToFile("res://Scenes/Scoreboard.tscn");
 	}
 }

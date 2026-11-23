@@ -2,8 +2,10 @@
 
 [ext_resource type="Script" uid="uid://bo663p0w6eijw" path="res://Scripts/GameOverUI.cs" id="1_k52d1"]
 [ext_resource type="Script" uid="uid://dux0kqmtdnb42" path="res://Scripts/GameOverButtons.cs" id="2_k52d1"]
+[ext_resource type="Script" uid="uid://clisvej4t61ow" path="res://Scripts/LoginControl.cs" id="2_uib17"]
+[ext_resource type="Theme" uid="uid://bqjtoyowotyw2" path="res://Assets/Themes/Default.tres" id="3_ktc4i"]
 
-[node name="Control" type="Control" unique_id=1509686705]
+[node name="GameOver" type="Control" unique_id=1509686705]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,89 +14,143 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_k52d1")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1177962130]
-layout_mode = 1
+[node name="LoginControl" type="Node" parent="." unique_id=476855866 node_paths=PackedStringArray("_buttonsView")]
+script = ExtResource("2_uib17")
+_buttonsView = NodePath("../MarginContainer/VBoxContainer")
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=1940003678]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="Background" unique_id=2106612387]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.08, 0.08, 0.08, 1)
 
-[node name="CenterContainer" type="CenterContainer" parent="MarginContainer" unique_id=48756258]
-layout_mode = 2
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1177962130]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer" unique_id=727959889]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=727959889]
 layout_mode = 2
-theme_override_constants/separation = 10
 script = ExtResource("2_k52d1")
 
-[node name="LabelsContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1498450876]
+[node name="LabelsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1498450876]
 layout_mode = 2
+size_flags_vertical = 2
 
-[node name="GameOverLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LabelsContainer" unique_id=413217204]
+[node name="GameOverLabel" type="Label" parent="MarginContainer/VBoxContainer/LabelsContainer" unique_id=413217204]
 layout_mode = 2
+theme = ExtResource("3_ktc4i")
+theme_type_variation = &"HeaderMedium"
 text = "GAME OVER"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="GameOverStateLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LabelsContainer" unique_id=35066881]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/LabelsContainer" unique_id=275542220]
+layout_mode = 2
+
+[node name="GameOverStateLabel" type="Label" parent="MarginContainer/VBoxContainer/LabelsContainer/VBoxContainer" unique_id=35066881]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("3_ktc4i")
+theme_type_variation = &"GraphFrameTitleLabel"
+theme_override_font_sizes/font_size = 12
+text = "You Win/Lose"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="ScoreContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/LabelsContainer/VBoxContainer" unique_id=1587568175]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ScoreLabel" type="Label" parent="MarginContainer/VBoxContainer/LabelsContainer/VBoxContainer/ScoreContainer" unique_id=124600116]
+layout_mode = 2
+theme = ExtResource("3_ktc4i")
+theme_type_variation = &"Score"
+theme_override_font_sizes/font_size = 12
+text = "Score:"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LabelsContainer" unique_id=124600116]
+[node name="ScorePointsLabel" type="Label" parent="MarginContainer/VBoxContainer/LabelsContainer/VBoxContainer/ScoreContainer" unique_id=912958773]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("3_ktc4i")
+theme_type_variation = &"Score"
+theme_override_font_sizes/font_size = 12
+text = "000000000"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="LoginContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1883853800]
-layout_mode = 2
-
-[node name="UserNameContainer" type="HBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer" unique_id=418591497]
+[node name="LoginContainer" type="GridContainer" parent="MarginContainer/VBoxContainer" unique_id=945587838]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 8
+size_flags_vertical = 6
+theme_override_constants/h_separation = 20
+columns = 2
 
-[node name="UserNameLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer/UserNameContainer" unique_id=1353328514]
+[node name="UserNameLabel" type="Label" parent="MarginContainer/VBoxContainer/LoginContainer" unique_id=1353328514]
 layout_mode = 2
-text = "Name"
+theme = ExtResource("3_ktc4i")
+text = "NAME"
+horizontal_alignment = 1
 
-[node name="UserNameInput" type="LineEdit" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer/UserNameContainer" unique_id=1647299636]
+[node name="UserNameInput" type="LineEdit" parent="MarginContainer/VBoxContainer/LoginContainer" unique_id=1647299636]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("3_ktc4i")
+theme_override_font_sizes/font_size = 14
 placeholder_text = "ABCD"
 alignment = 1
 max_length = 4
+caret_blink = true
 
-[node name="UserPasswordContainer" type="HBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer" unique_id=446599891]
+[node name="UserPasswordLabel" type="Label" parent="MarginContainer/VBoxContainer/LoginContainer" unique_id=1884859522]
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/separation = 20
+theme = ExtResource("3_ktc4i")
+text = "PASSWORD"
+horizontal_alignment = 1
 
-[node name="UserPasswordLabel" type="Label" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer/UserPasswordContainer" unique_id=1884859522]
-layout_mode = 2
-text = "Pass"
-
-[node name="UserPasswordInput" type="LineEdit" parent="MarginContainer/CenterContainer/VBoxContainer/LoginContainer/UserPasswordContainer" unique_id=1948977855]
+[node name="UserPasswordInput" type="LineEdit" parent="MarginContainer/VBoxContainer/LoginContainer" unique_id=1948977855]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("3_ktc4i")
+theme_override_font_sizes/font_size = 14
 placeholder_text = "PASS"
 alignment = 1
+context_menu_enabled = false
+emoji_menu_enabled = false
 virtual_keyboard_type = 6
+caret_blink = true
 secret = true
+secret_character = "x"
 
-[node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer/CenterContainer/VBoxContainer" unique_id=1281621435]
+[node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1281621435]
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_vertical = 10
 
-[node name="ContinueButton" type="Button" parent="MarginContainer/CenterContainer/VBoxContainer/ButtonsContainer" unique_id=1697948262]
+[node name="ContinueButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=1697948262]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("3_ktc4i")
 text = "CONTINUE"
 
-[node name="Button" type="Button" parent="MarginContainer/CenterContainer/VBoxContainer/ButtonsContainer" unique_id=2028819471]
+[node name="ExitButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=2028819471]
 layout_mode = 2
+theme = ExtResource("3_ktc4i")
 text = "EXIT"
 
-[connection signal="pressed" from="MarginContainer/CenterContainer/VBoxContainer/ButtonsContainer/ContinueButton" to="MarginContainer/CenterContainer/VBoxContainer" method="OnContinueButtonPressed"]
-[connection signal="pressed" from="MarginContainer/CenterContainer/VBoxContainer/ButtonsContainer/Button" to="MarginContainer/CenterContainer/VBoxContainer" method="OnExitButtonPressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ButtonsContainer/ContinueButton" to="MarginContainer/VBoxContainer" method="OnContinueButtonPressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ButtonsContainer/ExitButton" to="MarginContainer/VBoxContainer" method="OnExitButtonPressed"]

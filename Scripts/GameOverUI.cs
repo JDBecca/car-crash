@@ -1,28 +1,30 @@
 using Godot;
-using System;
 
 public partial class GameOverUI : Control
 {
 
 	public bool GameOverWin = false;
-	public int winnerPlayerID = 0;
+	public int WinnerPlayerID = 0;
 
 	public override void _Ready()
 	{
-		if (GameOverWin == true)
+		Label gameOverLabel = GetNode<Label>("%GameOverStateLabel");
+		if (GameOverWin)
 		{
-			GetNode<Label>("%GameOverStateLabel").Text = "YOU WON";
-			if (winnerPlayerID != 0)
+			gameOverLabel.Text = "YOU WIN!";
+			gameOverLabel.ThemeTypeVariation = "Win";
+			if (WinnerPlayerID != 0)
 			{
-				GetNode<Label>("%GameOverStateLabel").Text = "Player " + winnerPlayerID + " WON";
+				gameOverLabel.Text = "Player " + WinnerPlayerID + " WON";
 			}
 		}
 		else
 		{
-			GetNode<Label>("%GameOverStateLabel").Text = "YOU LOSE";
+			gameOverLabel.Text = "YOU LOSE";
+			gameOverLabel.ThemeTypeVariation = "Lose";
 		}
 
-		GetNode<Label>("%ScoreLabel").Text = $"Puntaje: {ScoreManager.Instance.Score}";
+		GetNode<Label>("%ScorePointsLabel").Text = $"{ScoreManager.Instance.Score}";
 
 	}
 }

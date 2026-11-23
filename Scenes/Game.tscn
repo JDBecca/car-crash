@@ -1,130 +1,149 @@
-[gd_scene format=3 uid="uid://dtg23015j6nxi"]
+[gd_scene format=3 uid="uid://cih7difymttql"]
 
-[ext_resource type="Script" uid="uid://b63oa0pjieiac" path="res://Scripts/GameLogic.cs" id="1_kldst"]
-[ext_resource type="Script" uid="uid://bkblrdsx4vxwu" path="res://Scripts/HUDControl.cs" id="1_kln2b"]
-[ext_resource type="Texture2D" uid="uid://binusf5d8b61b" path="res://Assets/WIP/Background.png" id="2_b2bpf"]
-[ext_resource type="PackedScene" uid="uid://b6y5a3vjepwx8" path="res://Scenes/Player.tscn" id="2_gl6un"]
-[ext_resource type="PackedScene" uid="uid://c15ccfkayig4e" path="res://Scenes/Enemy.tscn" id="3_j5yw3"]
-[ext_resource type="Script" uid="uid://dumh42wyxsbn6" path="res://Scripts/GoArrow.cs" id="4_2irst"]
-[ext_resource type="PackedScene" uid="uid://btlc8xew2kpp2" path="res://Scenes/HealPickup.tscn" id="6_7lihs"]
-[ext_resource type="PackedScene" uid="uid://cw3u1inc25q5x" path="res://Scenes/Camera.tscn" id="8_bf53h"]
-[ext_resource type="Script" uid="uid://bc2h1182hdu3i" path="res://Scripts/LevelSection.cs" id="9_bf53h"]
+[ext_resource type="Script" uid="uid://b63oa0pjieiac" path="res://Scripts/GameLogic.cs" id="1_tii1l"]
+[ext_resource type="Texture2D" uid="uid://binusf5d8b61b" path="res://Assets/WIP/Background.png" id="2_8dgta"]
+[ext_resource type="PackedScene" uid="uid://dtg23015j6nxi" path="res://Scenes/GameUI.tscn" id="3_2irst"]
+[ext_resource type="PackedScene" uid="uid://b6y5a3vjepwx8" path="res://Scenes/Player.tscn" id="3_j41el"]
+[ext_resource type="PackedScene" uid="uid://btlc8xew2kpp2" path="res://Scenes/HealPickup.tscn" id="4_8oijl"]
+[ext_resource type="Texture2D" uid="uid://fplyoabv6cpp" path="res://Assets/Sprites/Arrow.png" id="4_bf53h"]
+[ext_resource type="PackedScene" uid="uid://cw3u1inc25q5x" path="res://Scenes/Camera.tscn" id="5_4ed32"]
+[ext_resource type="Script" uid="uid://bc2h1182hdu3i" path="res://Scripts/LevelSection.cs" id="6_us4cf"]
+[ext_resource type="PackedScene" uid="uid://c15ccfkayig4e" path="res://Scenes/Enemy.tscn" id="7_qecx7"]
+[ext_resource type="PackedScene" uid="uid://cl7fdmup1jotr" path="res://Scenes/Boss.tscn" id="8_71axn"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_idj7w"]
-
-[node name="Main" type="Control" unique_id=720526830 node_paths=PackedStringArray("_cameraManager", "_goArrow")]
-layout_mode = 3
-anchors_preset = 0
-script = ExtResource("1_kldst")
+[node name="Main" type="Node" unique_id=1813199413 node_paths=PackedStringArray("_cameraManager", "_gameUIControl", "_sectionsContainer", "_player")]
+script = ExtResource("1_tii1l")
 _cameraManager = NodePath("CameraControl")
-_goArrow = NodePath("UI/GoArrow")
+_defaultEnemyScene = ExtResource("7_qecx7")
+_healPickupScene = ExtResource("4_8oijl")
+_gameUIControl = NodePath("CameraControl/GameUI")
+_sectionsContainer = NodePath("Arenas")
+_player = NodePath("Player")
+
+[node name="CameraControl" parent="." unique_id=1281878979 instance=ExtResource("5_4ed32")]
+
+[node name="GameUI" parent="CameraControl" unique_id=720526830 instance=ExtResource("3_2irst")]
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=1981543600]
-layer = -1
+layer = -10
 
-[node name="TextureRect" type="TextureRect" parent="Background" unique_id=331947675]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -128.0
-offset_top = -112.0
-offset_right = 128.0
-offset_bottom = 112.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_b2bpf")
+[node name="Parallax2D" type="Parallax2D" parent="Background" unique_id=431677752]
+repeat_size = Vector2(256, 224)
+repeat_times = 4
 
-[node name="UI" type="CanvasLayer" parent="." unique_id=1682840379]
+[node name="BackgroundSprite" type="Sprite2D" parent="Background/Parallax2D" unique_id=437536582]
+texture = ExtResource("2_8dgta")
+centered = false
+metadata/_edit_use_anchors_ = true
 
-[node name="HUD" type="Control" parent="UI" unique_id=1298518584]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("1_kln2b")
+[node name="UpSprite" type="Sprite2D" parent="." unique_id=1671335166]
+z_index = -1
+position = Vector2(128, 150)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_bf53h")
 
-[node name="HPLabel_P1" type="Label" parent="UI/HUD" unique_id=1851560806]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-label_settings = SubResource("LabelSettings_idj7w")
+[node name="LeftSprite" type="Sprite2D" parent="." unique_id=1843649853]
+z_index = -1
+position = Vector2(146, 170)
+rotation = 1.5707964
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_bf53h")
 
-[node name="HPLabel_P2" type="Label" parent="UI/HUD" unique_id=1990249664]
-layout_mode = 0
-offset_left = 189.0
-offset_right = 229.0
-offset_bottom = 23.0
-label_settings = SubResource("LabelSettings_idj7w")
-vertical_alignment = 1
+[node name="RightSprite" type="Sprite2D" parent="." unique_id=845007465]
+z_index = -1
+position = Vector2(109, 159)
+rotation = -1.5707964
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_bf53h")
 
-[node name="ScoreLabel" type="Label" parent="UI/HUD" unique_id=1278085277]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 152.0
-offset_top = -12.0
-offset_right = 192.0
-offset_bottom = 11.0
-grow_vertical = 2
-
-[node name="GoArrow" type="Control" parent="UI" unique_id=1135961392]
-layout_mode = 3
-anchors_preset = 0
-offset_left = -80.0
-offset_top = -56.0
-offset_right = -40.0
-offset_bottom = -16.0
-script = ExtResource("4_2irst")
-
-[node name="Label" type="Label" parent="UI/GoArrow" unique_id=237303807]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -21.5
-offset_top = -11.5
-offset_right = 21.5
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "GO ->"
-
-[node name="Player" parent="." unique_id=700098577 instance=ExtResource("2_gl6un")]
-position = Vector2(31.999996, 32)
-scale = Vector2(0.99999994, 0.99999994)
-
-[node name="HealBox" parent="." unique_id=2045452247 instance=ExtResource("6_7lihs")]
-position = Vector2(116, 119)
-
-[node name="HealBox2" parent="." unique_id=830810122 instance=ExtResource("6_7lihs")]
-position = Vector2(77, 52)
-
-[node name="HealBox3" parent="." unique_id=1072867742 instance=ExtResource("6_7lihs")]
-position = Vector2(164, 173)
-
-[node name="CameraControl" parent="." unique_id=1281878979 instance=ExtResource("8_bf53h")]
+[node name="DownSprite" type="Sprite2D" parent="." unique_id=1347443868]
+z_index = -1
+position = Vector2(126, 173)
+rotation = 3.1415925
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_bf53h")
 
 [node name="Arenas" type="Node2D" parent="." unique_id=513198581]
 
 [node name="Section_0" type="Node2D" parent="Arenas" unique_id=420637501]
-script = ExtResource("9_bf53h")
-EnemyPrefabOverride = ExtResource("3_j5yw3")
-
-[node name="Spawns" type="Node2D" parent="Arenas/Section_0" unique_id=736801836]
-
-[node name="Marker2D" type="Marker2D" parent="Arenas/Section_0/Spawns" unique_id=674384353]
-position = Vector2(208, 40)
+script = ExtResource("6_us4cf")
+EnemyPrefabOverride = ExtResource("7_qecx7")
 
 [node name="Section_1" type="Node2D" parent="Arenas" unique_id=364033639]
-script = ExtResource("9_bf53h")
-EnemyPrefabOverride = ExtResource("3_j5yw3")
+script = ExtResource("6_us4cf")
+ExitDirection = 3
+EnemyPrefabOverride = ExtResource("7_qecx7")
 
 [node name="Spawns" type="Node2D" parent="Arenas/Section_1" unique_id=112405012]
 
-[node name="Marker2D" type="Marker2D" parent="Arenas/Section_1/Spawns" unique_id=1943380755]
-position = Vector2(472, 184)
+[node name="Marker2D" type="Marker2D" parent="Arenas/Section_1/Spawns" unique_id=398066080]
+position = Vector2(432, 208)
+rotation = -1.0853626
+
+[node name="Marker2D2" type="Marker2D" parent="Arenas/Section_1/Spawns" unique_id=1509644012]
+position = Vector2(472, 128)
+rotation = 1.9967321
+
+[node name="Pickups" type="Node2D" parent="Arenas/Section_1" unique_id=471904870]
+
+[node name="Marker2D" type="Marker2D" parent="Arenas/Section_1/Pickups" unique_id=2123871829]
+position = Vector2(432, 88)
+rotation = 0.7218744
+
+[node name="Section_2" type="Node2D" parent="Arenas" unique_id=130681379]
+script = ExtResource("6_us4cf")
+ExitDirection = 2
+EnemyPrefabOverride = ExtResource("7_qecx7")
+
+[node name="Spawns" type="Node2D" parent="Arenas/Section_2" unique_id=1480103706]
+
+[node name="Marker2D" type="Marker2D" parent="Arenas/Section_2/Spawns" unique_id=1153385525]
+position = Vector2(488.00006, -208)
+rotation = -3.5710242
+
+[node name="Marker2D2" type="Marker2D" parent="Arenas/Section_2/Spawns" unique_id=1728267675]
+position = Vector2(312.00003, -192.00002)
+rotation = 0.18816471
+
+[node name="Marker2D3" type="Marker2D" parent="Arenas/Section_2/Spawns" unique_id=673990975]
+position = Vector2(399.99997, -152)
+rotation = 4.630122
+
+[node name="Pickups" type="Node2D" parent="Arenas/Section_2" unique_id=2036258288]
+
+[node name="Marker2D" type="Marker2D" parent="Arenas/Section_2/Pickups" unique_id=783399037]
+position = Vector2(400, -192)
+rotation = 1.0976166
+
+[node name="Marker2D2" type="Marker2D" parent="Arenas/Section_2/Pickups" unique_id=1226064605]
+position = Vector2(480, -112)
+rotation = -2.866351
+
+[node name="Section_3" type="Node2D" parent="Arenas" unique_id=2021262706]
+script = ExtResource("6_us4cf")
+ExitDirection = 2
+EnemyPrefabOverride = ExtResource("8_71axn")
+
+[node name="Spawns" type="Node2D" parent="Arenas/Section_3" unique_id=289497966]
+
+[node name="Marker2D" type="Marker2D" parent="Arenas/Section_3/Spawns" unique_id=157836956]
+position = Vector2(56.000008, -160)
+rotation = -6.2930975
+
+[node name="Pickups" type="Node2D" parent="Arenas/Section_3" unique_id=788069807]
+
+[node name="Marker2D" type="Marker2D" parent="Arenas/Section_3/Pickups" unique_id=1622978770]
+position = Vector2(152, -64)
+rotation = -2.245662
+
+[node name="Marker2D2" type="Marker2D" parent="Arenas/Section_3/Pickups" unique_id=1955439081]
+position = Vector2(152, -176)
+rotation = -4.1363564
+
+[node name="HealBox2" parent="." unique_id=830810122 instance=ExtResource("4_8oijl")]
+position = Vector2(128, 64)
+
+[node name="Player" parent="." unique_id=700098577 instance=ExtResource("3_j41el")]
+position = Vector2(128, 128)
+rotation = -1.5707964
+scale = Vector2(0.9999999, 0.9999999)

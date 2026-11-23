@@ -1,6 +1,5 @@
-using Godot;
 using System;
-using System.Collections.Generic;
+using Godot;
 
 public partial class EnemyAI : CarTemplate
 {
@@ -35,7 +34,7 @@ public partial class EnemyAI : CarTemplate
 	private float _stateTimer = 0.0f;
 	private float _stuckTimer = 0.0f;
 	private float _pursuitTimer = 0.0f;
-	private int _minHealthForHeal = 60;
+	[Export] private int _minHealthForHeal = 60;
 	private int _retreatDirection = -1;
 	private Vector2 _retreatPoint = Vector2.Zero;
 
@@ -59,13 +58,15 @@ public partial class EnemyAI : CarTemplate
 		if (_retargetTimer >= _retargetInterval)
 		{
 			_retargetTimer = 0.0f;
-			if (!IsInstanceValid(_currentTarget) && currentHealth <= _minHealthForHeal || CurrentState == AIState.SeekForHeal)
+			if (CurrentHealth > _minHealthForHeal || GetTree().GetNodeCountInGroup("Heal") <= 0)
 			{
-				SetNewPickupTarget();
-			}
-			if (!IsInstanceValid(_currentTarget) || CurrentState == AIState.SeekAndRam)
-			{
+				SwitchState(AIState.SeekAndRam);
 				SetNewTarget(null);
+			}
+			else
+			{
+				SwitchState(AIState.SeekForHeal);
+				SetNewPickupTarget();
 			}
 		}
 
@@ -86,68 +87,60 @@ public partial class EnemyAI : CarTemplate
 		}
 	}
 
+	private void SteerToward(Vector2 worldPoint, float fdelta)
+	{
+		if (_aimPosition == Vector2.Zero) { _aimPosition = worldPoint; }
+
+		_aimPosition = _aimPosition.Lerp(worldPoint, _trackingAccuracy * fdelta);
+
+		Vector2 toAimedPoint = _aimPosition - GlobalPosition;
+		float desiredSteer = 0.0f;
+		if (toAimedPoint.LengthSquared() > 0.001f)
+		{
+			float cross = Transform.X.Cross(toAimedPoint.Normalized());
+			desiredSteer = Mathf.Clamp(cross * 2.5f, -1.0f, 1.0f);
+		}
+		_steerInput = Mathf.MoveToward(_steerInput, desiredSteer, _steeringReactionSpeed * fdelta);
+		_throttleInput = 1.0f;
+	}
+
 	private void RammingState(float fdelta)
 	{
 		if (!IsInstanceValid(_currentTarget))
 		{
 			SetNewTarget(null);
-			ThrottleInput = 0.0f;
-			SteerInput = Mathf.MoveToward(SteerInput, 0.0f, _steeringReactionSpeed * fdelta);
-			return;
+			if (!IsInstanceValid(_currentTarget))
+			{
+				_throttleInput = 0.0f;
+				_steerInput = Mathf.MoveToward(_steerInput, 0.0f, _steeringReactionSpeed * fdelta);
+				return;
+			}
 		}
 
 		_pursuitTimer += fdelta;
-
-		if (_aimPosition == Vector2.Zero)
-		{
-			_aimPosition = _currentTarget.GlobalPosition;
-		}
-
-		_aimPosition = _aimPosition.Lerp(_currentTarget.GlobalPosition, _trackingAccuracy * fdelta);
-
-		Vector2 toAimedPoint = _aimPosition - GlobalPosition;
-		Vector2 forward = Transform.X;
-
-		float cross = forward.Cross(toAimedPoint.Normalized());
-		float desiredSteer = Mathf.Clamp(cross * 2.5f, -1.0f, 1.0f);
-
-		SteerInput = Mathf.MoveToward(SteerInput, desiredSteer, _steeringReactionSpeed * fdelta);
-		ThrottleInput = 1.0f;
+		SteerToward(_currentTarget.GlobalPosition, fdelta);
 	}
 
 	private void HealingState(float fdelta)
 	{
-		if (!IsInstanceValid(_currentTarget))
+		if (!IsInstanceValid(_currentTarget) || CurrentHealth > _minHealthForHeal)
 		{
 			SetNewPickupTarget();
-			ThrottleInput = 0.0f;
-			SteerInput = Mathf.MoveToward(SteerInput, 0.0f, _steeringReactionSpeed * fdelta);
-			return;
+			if (!IsInstanceValid(_currentTarget) || CurrentHealth > _minHealthForHeal)
+			{
+				SwitchState(AIState.SeekAndRam);
+				return;
+			}
 		}
 
-		if (_aimPosition == Vector2.Zero)
-		{
-			_aimPosition = _currentTarget.GlobalPosition;
-		}
-
-		_aimPosition = _aimPosition.Lerp(_currentTarget.GlobalPosition, _trackingAccuracy * fdelta);
-
-		Vector2 toAimedPoint = _aimPosition - GlobalPosition;
-		Vector2 forward = Transform.X;
-
-		float cross = forward.Cross(toAimedPoint.Normalized());
-		float desiredSteer = Mathf.Clamp(cross * 2.5f, -1.0f, 1.0f);
-
-		SteerInput = Mathf.MoveToward(SteerInput, desiredSteer, _steeringReactionSpeed * fdelta);
-
-		ThrottleInput = 1.0f;
+		SteerToward(_currentTarget.GlobalPosition, fdelta);
 	}
 
 	private void TakeDistanceState()
 	{
 		if (!IsInstanceValid(_currentTarget))
 		{
-			if (currentHealth <= _minHealthForHeal)
+			if (CurrentHealth <= _minHealthForHeal)
 			{
 				SwitchState(AIState.SeekForHeal);
 			}
@@ -162,9 +155,9 @@ public partial class EnemyAI : CarTemplate
 
 		Vector2 forward = Transform.X;
 		float cross = forward.Cross(_retreatPoint);
-		SteerInput = Mathf.Clamp(cross * 2.5f, -1.0f, 1.0f);
+		_steerInput = Mathf.Clamp(cross * 2.5f, -1.0f, 1.0f);
 
-		ThrottleInput = 1.0f;
+		_throttleInput = 1.0f;
 
 		if (distanceToTarget >= _desiredRetreatDistance)
 		{
@@ -176,8 +169,8 @@ public partial class EnemyAI : CarTemplate
 	{
 		if (UnstuckType == StuckType.FrontStuck)
 		{
-			ThrottleInput = -1.0f;
-			SteerInput = 1.0f;
+			_throttleInput = -1.0f;
+			_steerInput = 1.0f;
 		}
 		else if (UnstuckType == StuckType.LoopStuck)
 		{
@@ -195,7 +188,7 @@ public partial class EnemyAI : CarTemplate
 	{
 		if (CurrentState == AIState.Unstuck) { return; }
 
-		if (Mathf.Abs(ThrottleInput) > 0.5f && Velocity.Length() < 25.0f)
+		if (Mathf.Abs(_throttleInput) > 0.5f && Velocity.Length() < 25.0f)
 		{
 			_stuckTimer += fdelta;
 			if (_stuckTimer >= _stuckCheckInterval)
@@ -227,9 +220,9 @@ public partial class EnemyAI : CarTemplate
 
 	private void CheckHealth()
 	{
-		if (currentHealth <= _minHealthForHeal && GetTree().GetNodeCountInGroup("HealingPickups") > 0)
+		if (CurrentHealth <= _minHealthForHeal && GetTree().GetNodeCountInGroup("Heal") > 0)
 		{
-			SwitchState(AIState.SeekForHeal);
+			if (CurrentState != AIState.SeekForHeal) { SwitchState(AIState.SeekForHeal); }
 		}
 	}
 
@@ -241,7 +234,8 @@ public partial class EnemyAI : CarTemplate
 		if (state == AIState.TakeDistance && IsInstanceValid(_currentTarget))
 		{
 			Vector2 away = (GlobalPosition - _currentTarget.GlobalPosition).Normalized();
-			float randomAngle = (float)GD.RandRange((_retreatDirection * Mathf.Pi) / 3.0f, Mathf.Pi / 3.0f);
+			float randomAngle = (float)GD.RandRange(-Mathf.Pi / 3.0f, Mathf.Pi / 3.0f);
+			if (_retreatDirection > 0) { randomAngle = Math.Abs(randomAngle); }
 			_retreatPoint = away.Rotated(randomAngle);
 		}
 	}
@@ -261,8 +255,10 @@ public partial class EnemyAI : CarTemplate
 		float shortestDist = float.MaxValue;
 		foreach (Node node in cars)
 		{
-			if (node is Node2D car && car != this && car != ignoredTarget && IsInstanceValid(car))
+			if (node is Node2D car && car != this && car != ignoredTarget && IsInstanceValid(car) && !car.IsQueuedForDeletion())
 			{
+				if (car is CarTemplate carTemplate && carTemplate.CurrentHealth <= 0) { continue; }
+
 				float dist = GlobalPosition.DistanceSquaredTo(car.GlobalPosition);
 				if (dist < shortestDist)
 				{
@@ -272,18 +268,20 @@ public partial class EnemyAI : CarTemplate
 			}
 		}
 		_currentTarget = bestTarget;
+
+		if (_currentTarget != null) { _aimPosition = _currentTarget.GlobalPosition; }
 	}
 
 	private void SetNewPickupTarget()
 	{
-		var heals = GetTree().GetNodesInGroup("HealingPickups");
+		var heals = GetTree().GetNodesInGroup("Heal");
 		Node2D bestTarget = null;
 		float shortestDist = float.MaxValue;
-		if (currentHealth <= _minHealthForHeal)
+		if (CurrentHealth <= _minHealthForHeal)
 		{
 			foreach (Node node in heals)
 			{
-				if (node is Node2D heal)
+				if (node is Node2D heal && IsInstanceValid(heal) && !heal.IsQueuedForDeletion())
 				{
 					float dist = GlobalPosition.DistanceSquaredTo(heal.GlobalPosition);
 					if (dist < shortestDist)
@@ -295,5 +293,7 @@ public partial class EnemyAI : CarTemplate
 			}
 		}
 		_currentTarget = bestTarget;
+
+		if (_currentTarget != null) { _aimPosition = _currentTarget.GlobalPosition; }
 	}
 }

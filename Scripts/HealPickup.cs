@@ -1,40 +1,26 @@
 using Godot;
-using System;
 
-public partial class HealPickup : Node2D
+public partial class HealPickup : Node2D, IPickup
 {
-	private int maxHealing = 50;
+	[Export] private int _healingAmount = 50;
 
 	public override void _Ready()
 	{
 		AddToGroup("Pickups");
-		AddToGroup("HealingPickups");
+		AddToGroup("Heal");
 	}
 	private void OnPickupBodyEntered(PhysicsBody2D body)
 	{
 		if (body is CarTemplate target)
 		{
-			Heal(target);
+			ApplyEffect(target);
 		}
 	}
 
-	private void Heal(CarTemplate target)
+	public void ApplyEffect(CarTemplate target)
 	{
-		int currentHealth = target.currentHealth;
-		if (target.currentHealth > 0 && target.currentHealth <= 50)
-		{
-			target.Heal(maxHealing);
-		}
-		else if (target.currentHealth > 0 && target.currentHealth != 100)
-		{
-			int healing = target.maxHealth - currentHealth;
-			target.Heal(healing);
-		}
-		else
-		{
-			return;
-		}
-
+		if (target.CurrentHealth >= 100) { return; }
+		target.Heal(_healingAmount);
 		if (target.IsInGroup("Players"))
 		{
 			ScoreManager.Instance.AddScore(50);

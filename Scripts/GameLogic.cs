@@ -1,15 +1,16 @@
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Godot;
 
-public partial class GameLogic : Control
+public partial class GameLogic : Node
 {
-	[Export] private CameraManager _cameraManager;
-	[Export] private GoArrow _goArrow;
-	[Export] private PackedScene _defaultEnemyScene;
-	[Export] private Node2D _sectionsContainer;
 
-	protected bool _hasPlayerWon = false;
+	[Export] private CameraManager _cameraManager;
+	[Export] private PackedScene _defaultEnemyScene;
+	[Export] private PackedScene _healPickupScene;
+	[Export] private GameUI _gameUIControl;
+	[Export] private Node2D _sectionsContainer;
+	[Export] private PlayerCar _player;
 
 	private List<LevelSection> _sections = new();
 	private int _currentSectionIndex = 0;
@@ -31,13 +32,11 @@ public partial class GameLogic : Control
 		_cameraManager.PlayerTriggeredExit += OnPlayerTriggerExit;
 		_cameraManager.CameraReachedPoint += OnCameraReachedPoint;
 
-		foreach (CharacterBody2D node in FindChildren("*", "CharacterBody2D", true))
+		foreach (CharacterBody2D node in GetTree().GetNodesInGroup("Players"))
 		{
-			if (node.IsInGroup("Players"))
-			{
-				CarTemplate car = (CarTemplate)node;
-				car.CheckGameOver += GameOverCheck;
-			}
+			CarTemplate car = (CarTemplate)node;
+			car.CheckGameOver += GameOverCheck;
+			_gameUIControl.BindPlayer(car);
 		}
 
 		Callable.From(() => StartSection(_currentSectionIndex)).CallDeferred();
@@ -46,10 +45,11 @@ public partial class GameLogic : Control
 	private void StartSection(int i)
 	{
 		_cameraManager.SetArena();
-		_goArrow.HideArrow();
+		_gameUIControl.GoArrowHide();
 		SetPlayerInputEnabled(true);
 
 		SpawnEnemiesForSection(i);
+		SpawnPickupsForSection(i);
 	}
 
 	private void SpawnEnemiesForSection(int i)
@@ -59,22 +59,54 @@ public partial class GameLogic : Control
 
 		PackedScene enemyPrefab = section.EnemyPrefabOverride ?? _defaultEnemyScene;
 
-		foreach (Transform2D spawnTransform in section.GetSpawnTransforms())
+		if (section.GetSpawnsTransforms().Count <= 0)
+		{
+			OnSectionCleared();
+			return;
+		}
+		foreach (Transform2D spawnTransform in section.GetSpawnsTransforms())
 		{
 			EnemyAI enemy = enemyPrefab.Instantiate<EnemyAI>();
 			enemy.CheckGameOver += OnEnemyDied;
 
+			if (enemy.SceneFilePath == "res://Scenes/Boss.tscn")
+			{
+				enemy.AddToGroup("Boss");
+				_gameUIControl.BindBoss(enemy);
+			}
 			AddChild(enemy);
 			enemy.GlobalTransform = spawnTransform;
 			_aliveEnemies++;
 		}
 	}
 
+	private void SpawnPickupsForSection(int i)
+	{
+		LevelSection section = _sections[i];
+		PackedScene healPickup = _healPickupScene;
+
+		foreach (Transform2D spawnTransform in section.GetPickupsTransforms())
+		{
+			HealPickup pickup = healPickup.Instantiate<HealPickup>();
+
+			AddChild(pickup);
+			pickup.GlobalTransform = spawnTransform;
+		}
+	}
+
 	private void OnEnemyDied(CarTemplate caller)
 	{
-		if (!caller.IsInGroup("Enemies")) return;
-
-		ScoreManager.Instance.AddScore(1000);
+		if (caller.LastAttacker != null && caller.LastAttacker.IsInGroup("Players"))
+		{
+			if (caller.IsInGroup("Boss"))
+			{
+				ScoreManager.Instance.AddScore(3000);
+			}
+			else
+			{
+				ScoreManager.Instance.AddScore(1000);
+			}
+		}
 
 		_aliveEnemies--;
 		if (_aliveEnemies <= 0)
@@ -92,15 +124,16 @@ public partial class GameLogic : Control
 		}
 
 		CameraManager.SectionDirection exitDir = _sections[_currentSectionIndex].ExitDirection;
-		_goArrow.ShowArrow(exitDir);
+		_gameUIControl.GoArrowShow(exitDir);
 		_cameraManager.OpenExit(exitDir);
 	}
 
 	private void OnPlayerTriggerExit(int dirInt)
 	{
+		_player.Heal(20);
 		CameraManager.SectionDirection dir = (CameraManager.SectionDirection)dirInt;
 
-		_goArrow.HideArrow();
+		_gameUIControl.GoArrowHide();
 		SetPlayerInputEnabled(false);
 
 		Vector2 offset = dir switch
@@ -121,6 +154,10 @@ public partial class GameLogic : Control
 	{
 		ScoreManager.Instance.AddScore(5000);
 		_currentSectionIndex++;
+		foreach (Node2D node in GetTree().GetNodesInGroup("Pickups"))
+		{
+			node.QueueFree();
+		}
 		StartSection(_currentSectionIndex);
 	}
 
@@ -147,37 +184,46 @@ public partial class GameLogic : Control
 		}
 	}
 
-	protected void GameOverCheck(CarTemplate Caller)
+	protected void GameOverCheck(CarTemplate caller)
 	{
-		if (Caller.IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") == 1)
-		{
-			HandleGameOver(_hasPlayerWon = false, 0);
-		}
-		else if (Caller.IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") >= 1 && GetTree().GetNodeCountInGroup("Enemies") <= 0)
+
+		if (caller.IsInGroup("Players") && GetTree().GetNodeCountInGroup("Players") >= 1 && GetTree().GetNodeCountInGroup("Enemies") <= 0)
 		{
 			int winnerPlayerID = 1;
-			if (GetTree().GetFirstNodeInGroup("Players") != Caller)
+			if (GetTree().GetFirstNodeInGroup("Players") != caller)
 			{
 				winnerPlayerID = 2;
 			}
-			HandleGameOver(_hasPlayerWon = true, winnerPlayerID);
+			HandleGameOver(true, winnerPlayerID);
+		}
+		else
+		{
+			HandleGameOver(false, 0);
 		}
 	}
 
-	protected void HandleGameOver(bool hasPlayerWon, int winnerPlayerID)
+	protected async Task HandleGameOver(bool hasPlayerWon, int winnerPlayerID)
 	{
-		ScoreManager.Instance.AddScore(10000);
+		if (hasPlayerWon) { ScoreManager.Instance.AddScore(10000); }
 
-		var GameOverScene = GD.Load<PackedScene>("res://Scenes/GameOver.tscn");
-		GameOverUI GameOverInstance = GameOverScene.Instantiate<GameOverUI>();
 
-		GameOverInstance.GameOverWin = hasPlayerWon;
-		GameOverInstance.winnerPlayerID = winnerPlayerID;
+		await Wait();
 
-		Node gameScene = GetTree().CurrentScene;
-		GetTree().Root.AddChild(GameOverInstance);
-		GetTree().CurrentScene = GameOverInstance;
+		async Task Wait()
+		{
+			var gameScene = GetTree().CurrentScene;
+			_gameUIControl.ShowEndLabel(hasPlayerWon);
 
-		gameScene.QueueFree();
+			await ToSignal(GetTree().CreateTimer(5), SceneTreeTimer.SignalName.Timeout);
+
+			var gameOverScene = GD.Load<PackedScene>("res://Scenes/GameOver.tscn");
+			GameOverUI gameOverInstance = gameOverScene.Instantiate<GameOverUI>();
+			gameOverInstance.GameOverWin = hasPlayerWon;
+			gameOverInstance.WinnerPlayerID = winnerPlayerID;
+
+			GetTree().Root.AddChild(gameOverInstance);
+			GetTree().CurrentScene = gameOverInstance;
+			gameScene.QueueFree();
+		}
 	}
 }

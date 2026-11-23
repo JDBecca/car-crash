@@ -1,0 +1,143 @@
+[gd_scene format=3 uid="uid://dtg23015j6nxi"]
+
+[ext_resource type="Script" uid="uid://bel5wpusovu6t" path="res://Scripts/GameUI.cs" id="1_frnsy"]
+[ext_resource type="Theme" uid="uid://bqjtoyowotyw2" path="res://Assets/Themes/Default.tres" id="3_may0d"]
+[ext_resource type="Texture2D" uid="uid://pyf45nb2ac7y" path="res://Assets/Sprites/GoArrow.png" id="4_frnsy"]
+[ext_resource type="Script" uid="uid://dumh42wyxsbn6" path="res://Scripts/GoArrow.cs" id="4_ov5yk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l7xo0"]
+bg_color = Color(0.078431375, 0.078431375, 0.078431375, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+anti_aliasing = false
+
+[sub_resource type="LabelSettings" id="LabelSettings_e3i4v"]
+
+[node name="Main" type="Control" unique_id=720526830 node_paths=PackedStringArray("_goArrow")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_frnsy")
+_goArrow = NodePath("GoArrow")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1554340680]
+
+[node name="MarginContainer" type="MarginContainer" parent="UI" unique_id=1909020478]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HUDContainer" type="Control" parent="UI/MarginContainer" unique_id=1673521404]
+layout_mode = 2
+
+[node name="HUDBackground" type="Panel" parent="UI/MarginContainer/HUDContainer" unique_id=793781636]
+layout_mode = 0
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 252.0
+offset_bottom = 20.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_l7xo0")
+
+[node name="HPLabel_P2" type="Label" parent="UI/MarginContainer/HUDContainer/HUDBackground" unique_id=214410147]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 172.0
+offset_top = 7.5
+offset_right = 212.0
+offset_bottom = 30.5
+grow_horizontal = 0
+theme = ExtResource("3_may0d")
+label_settings = SubResource("LabelSettings_e3i4v")
+vertical_alignment = 1
+
+[node name="Labels" type="HBoxContainer" parent="UI/MarginContainer/HUDContainer" unique_id=1454064295]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 17.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="UI/MarginContainer/HUDContainer/Labels" unique_id=125550287]
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_stretch_ratio = 0.6
+
+[node name="HPLabel_P1" type="Label" parent="UI/MarginContainer/HUDContainer/Labels/VBoxContainer3" unique_id=1590432702]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_may0d")
+theme_override_colors/font_color = Color(0.92, 0, 0.015333099, 1)
+text = "HP 100"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainer/HUDContainer/Labels" unique_id=1483474170]
+layout_mode = 2
+size_flags_horizontal = 2
+alignment = 1
+
+[node name="BossHPLabel" type="Label" parent="UI/MarginContainer/HUDContainer/Labels/VBoxContainer" unique_id=94202836]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BOSS HP 500"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+visible_characters = 11
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="UI/MarginContainer/HUDContainer/Labels" unique_id=1542357963]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="ScoreLabel" type="Label" parent="UI/MarginContainer/HUDContainer/Labels/VBoxContainer2" unique_id=609174843]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_may0d")
+theme_type_variation = &"Score"
+text = "9999999999"
+horizontal_alignment = 2
+
+[node name="GameOverLabel" type="Label" parent="UI/MarginContainer/HUDContainer" unique_id=873986814]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -51.5
+offset_top = -8.5
+offset_right = 51.5
+offset_bottom = 8.5
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.0032321627
+theme = ExtResource("3_may0d")
+theme_override_font_sizes/font_size = 26
+text = "YOU WIN/LOSE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GoArrow" type="Control" parent="." unique_id=1157437355]
+anchors_preset = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("4_ov5yk")
+
+[node name="GoArrowSprite" type="Sprite2D" parent="GoArrow" unique_id=1780770475]
+texture = ExtResource("4_frnsy")
+centered = false

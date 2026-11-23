@@ -1,38 +1,40 @@
 using Godot;
-using System;
 
 public partial class GoArrow : Control
 {
 
 	private Tween _blinkTween;
+	private Sprite2D _currentSprite;
 
 	public override void _Ready()
 	{
 		Visible = false;
+		_currentSprite = GetNode<Sprite2D>("GoArrowSprite");
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public void ShowArrow(CameraManager.SectionDirection dir)
 	{
+		int arrowWidth = _currentSprite.Texture.GetWidth();
+		int arrowHeight = _currentSprite.Texture.GetHeight();
 		Visible = true;
 
 		switch (dir)
 		{
 			case CameraManager.SectionDirection.Right:
 				RotationDegrees = 0;
-				Position = new Vector2(210, 105);
+				Position = new Vector2(256 - arrowWidth, 136 - arrowHeight);
 				break;
 			case CameraManager.SectionDirection.Left:
 				RotationDegrees = 180;
-				Position = new Vector2(45, 120);
+				Position = new Vector2(arrowWidth, 136);
 				break;
 			case CameraManager.SectionDirection.Down:
 				RotationDegrees = 90;
-				Position = new Vector2(135, 195);
+				Position = new Vector2(128 + (arrowHeight / 2), 224 - arrowWidth);
 				break;
 			case CameraManager.SectionDirection.Up:
 				RotationDegrees = 270;
-				Position = new Vector2(120, 30);
+				Position = new Vector2(128 - (arrowHeight / 2), 24 + arrowWidth);
 				break;
 		}
 

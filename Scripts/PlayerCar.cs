@@ -2,10 +2,8 @@ using Godot;
 
 public partial class PlayerCar : CarTemplate
 {
-	private string _forward = "Forward";
-	private string _left = "Left";
-	private string _right = "Right";
-	private string _backward = "Backward";
+	private ICarInputProvider _inputProvier = null!;
+
 
 	public bool IsInputEnabled { get; set; } = true;
 
@@ -19,39 +17,57 @@ public partial class PlayerCar : CarTemplate
 
 	private void SetInputs()
 	{
-		if (GetTree().GetFirstNodeInGroup("Players") != this)
+		bool isPlayerTwo = GetTree().GetFirstNodeInGroup("Players") != this;
+		if (isPlayerTwo)
 		{
-			_right = "Right_P2";
-			_left = "Left_P2";
-			_forward = "Forward_P2";
-			_backward = "Backward_P2";
+			_inputProvier = new KeyboardCarInput("Right_P2", "Left_P2", "Forward_P2", "Backward_P2");
 			Sprite2D sprite2D = GetNode<Sprite2D>("Sprite2D");
-			Vector2 textureSize = sprite2D.Scale;
 			sprite2D.Texture = GD.Load<Texture2D>("res://Assets/Sprites/red_car_sprite.png");
-			sprite2D.Scale = textureSize;
+		}
+		else
+		{
+			_inputProvier = new KeyboardCarInput("Right", "Left", "Forward", "Backward");
 		}
 	}
+
 	protected override void CarInputs(double delta)
 	{
-		base.CarInputs(delta);
 		if (!IsInputEnabled)
 		{
-			SteerInput = 0.0f;
-			ThrottleInput = 0.0f;
+			_steerInput = 0.0f;
+			_throttleInput = 0.0f;
 			return;
 		}
-		SteerInput = Input.GetActionStrength(_right) - Input.GetActionStrength(_left);
-		ThrottleInput = Input.GetActionStrength(_forward) - Input.GetActionStrength(_backward);
+		_steerInput = _inputProvier.GetSteering();
+		_throttleInput = _inputProvier.GetThrottle();
 	}
 
 	protected override void OnCarCrashed(IDamageable target, float damageDealt, float hitZoneMultiplier)
 	{
-		GD.Print(damageDealt);
 		if (target is CarTemplate targetCar && targetCar.IsInGroup("Enemies"))
 		{
-			bool isRearHit = damageDealt > 0 && hitZoneMultiplier >= backBumperHitMultiplier;
+			bool isRearHit = damageDealt > 0 && hitZoneMultiplier >= _backBumperHitMultiplier;
 			int points = isRearHit ? 500 : 100;
 			ScoreManager.Instance.AddScore(points);
 		}
 	}
+}
+
+public class KeyboardCarInput : ICarInputProvider
+{
+	private readonly string _right;
+	private readonly string _left;
+	private readonly string _forward;
+	private readonly string _backward;
+
+	public KeyboardCarInput(string rightAction, string leftAction, string forwardAction, string backwardAction)
+	{
+		_right = rightAction;
+		_left = leftAction;
+		_forward = forwardAction;
+		_backward = backwardAction;
+	}
+
+	public float GetSteering() => Input.GetActionStrength(_right) - Input.GetActionStrength(_left);
+	public float GetThrottle() => Input.GetActionStrength(_forward) - Input.GetActionStrength(_backward);
 }

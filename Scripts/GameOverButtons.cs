@@ -1,39 +1,31 @@
 using Godot;
 using System;
-using System.Threading.Tasks;
 
-public partial class GameOverButtons : LoginControl
+public partial class GameOverButtons : VBoxContainer
 {
-	public override void _Ready()
-	{
-		LoginCompleted += OnLoginCompleted;
-	}
+	[Signal] public delegate void LoginRequestEventHandler(string username, string password);
+	[Signal] public delegate void ExitRequestEventHandler();
 
 	private void OnExitButtonPressed()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/MainMenu.tscn");
-		ScoreManager.Instance.ResetScore();
+		EmitSignal(SignalName.ExitRequest);
 	}
 
 	private async void OnContinueButtonPressed()
 	{
 		string username = GetNode<LineEdit>("%UserNameInput").Text.Trim();
 		string password = GetNode<LineEdit>("%UserPasswordInput").Text;
-		string passwordHash = string.IsNullOrWhiteSpace(password) ? null : password.Sha256Text();
-		DateTime currentdate = DateTime.Now;
-		GetNode<Button>("%ContinueButton").Disabled = true;
-
-		bool success = await Authenticate(username, passwordHash, currentdate);
-
-		if (!success)
+		if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
 		{
-			GetNode<Button>("%ContinueButton").Disabled = false;
+			GD.PrintErr("Empty Inputs.");
+			return;
 		}
+		EmitSignal(SignalName.LoginRequest, username, password);
+
 	}
 
-	private void OnLoginCompleted(bool success, string message)
+	public void SetLoading(bool isLoading)
 	{
-		if (success) { GD.Print($"Login: {message}"); }
-		else { GD.PrintErr($"Login: {message}"); }
+		GetNode<Button>("%ContinueButton").Disabled = isLoading;
 	}
 }

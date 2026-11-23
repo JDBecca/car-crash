@@ -7,6 +7,7 @@
 size = Vector2(10, 10)
 
 [node name="HealBox" type="Node2D" unique_id=2045452247]
+z_index = -1
 script = ExtResource("1_cb3xv")
 
 [node name="PickupArea" type="Area2D" parent="." unique_id=117388500]

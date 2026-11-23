@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://cl7fdmup1jotr"]
+
+[ext_resource type="Script" uid="uid://boolrdx80wiav" path="res://Scripts/EnemyAI.cs" id="1_rgqsi"]
+[ext_resource type="Texture2D" uid="uid://2ogicbnatbaa" path="res://Assets/Sprites/boss_car_sprite.png" id="2_rgqsi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wovta"]
+size = Vector2(6, 9.5)
+
+[node name="Enemy" type="CharacterBody2D" unique_id=899399180]
+motion_mode = 1
+platform_on_leave = 2
+platform_floor_layers = 0
+script = ExtResource("1_rgqsi")
+_minHealthForHeal = 10
+_maxSpeedForward = 200.0
+_maxSpeedReverse = 150.0
+_maxCrashDamage = 50
+MaxHealth = 300
+_frontBumperHitMultiplier = 0.4
+_backBumperHitMultiplier = 1.2
+_sideHitMultiplier = 0.8
+_maxKnockbackMultiplier = 0.8
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=239527974]
+position = Vector2(-5.684342e-14, 0)
+scale = Vector2(0.4375, 0.5)
+texture = ExtResource("2_rgqsi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2016609000]
+position = Vector2(-0.0003860761, -0.0006439406)
+rotation = 1.5707964
+scale = Vector2(1, 1.25)
+shape = SubResource("RectangleShape2D_wovta")

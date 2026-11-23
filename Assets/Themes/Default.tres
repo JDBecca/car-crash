@@ -1,0 +1,18 @@
+[gd_resource type="Theme" format=3 uid="uid://bqjtoyowotyw2"]
+
+[ext_resource type="FontFile" uid="uid://ci2hujxnrmxgi" path="res://Assets/Fonts/golem-script.ttf" id="1_qjduq"]
+
+[resource]
+default_font = ExtResource("1_qjduq")
+LastScore/base_type = &"Label"
+LastScore/colors/font_color = Color(0.016, 0, 0.42, 1)
+Lose/base_type = &"Label"
+Lose/colors/font_color = Color(0.85, 0, 0.156, 1)
+NameOnScoreboard/base_type = &"Label"
+NameOnScoreboard/colors/font_color = Color(0, 0.867, 1, 1)
+Rank/base_type = &"Label"
+Rank/colors/font_color = Color(0, 1, 0.016, 1)
+Score/base_type = &"Label"
+Score/colors/font_color = Color(1.496, 0.81, 0, 1)
+Win/base_type = &"Label"
+Win/colors/font_color = Color(0, 0.878, 0.016, 1)
